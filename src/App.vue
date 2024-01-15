@@ -9,9 +9,9 @@
 </template>
 
 <script>
-import FormularioControl from './components/FormularioControl.vue'
+import FormularioControl from "./components/FormularioControl.vue";
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
     FormularioControl,
@@ -20,5 +20,5 @@ export default {
   data: () => ({
     //
   }),
-}
+};
 </script>
