@@ -1,18 +1,20 @@
 <template>
   <v-app>
     <v-main>
-      <HelloWorld/>
+      <v-container>
+        <FormularioControl />
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import FormularioControl from './components/FormularioControl.vue'
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    FormularioControl,
   },
 
   data: () => ({
