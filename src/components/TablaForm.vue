@@ -1,16 +1,21 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="controles"
-    :sort-by="[{ key: 'calories', order: 'asc' }]"
-  >
+  <v-data-table :headers="headers" :items="filteredControles">
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Documentos</v-toolbar-title>
+
+        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-text-field
+          v-model="search"
+          label="Buscar"
+          solo-inverted
+          clearable
+        ></v-text-field>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-btn variant="tonal" @click="redirectToForm">Crear documento</v-btn>
 
         <v-spacer></v-spacer>
+
         <v-dialog v-model="dialog" max-width="500px">
           <v-card>
             <v-card-title>
@@ -76,7 +81,7 @@
       </v-icon>
     </template>
     <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize"> Reset </v-btn>
+      <v-btn @click="initialize"> Recargar </v-btn>
     </template>
   </v-data-table>
 </template>
@@ -90,6 +95,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export default {
   data: () => ({
+    search: "",
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -122,7 +128,17 @@ export default {
     },
   }),
 
-  computed: {},
+  computed: {
+    filteredControles() {
+      return this.controles.filter((item) => {
+        return Object.values(item).some(
+          (value) =>
+            value &&
+            value.toString().toLowerCase().includes(this.search.toLowerCase())
+        );
+      });
+    },
+  },
 
   watch: {
     dialog(val) {
@@ -139,6 +155,9 @@ export default {
   },
 
   methods: {
+    clearSearch() {
+      this.search = "";
+    },
     redirectToForm() {
       // Puedes redirigir a la ruta del formulario aquí, por ejemplo:
       this.$router.push("/form");

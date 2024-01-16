@@ -6,7 +6,9 @@
           <v-card-title class="text-h6 text-md-h5 text-lg-h4"
             >Control de desperdicio</v-card-title
           >
-          <v-card-text class="subtitulos"> Hoja de control de pérdida </v-card-text>
+          <v-card-text class="subtitulos">
+            Hoja de control de pérdida
+          </v-card-text>
           <v-card-text class="subtitulos"> Código documento: XX </v-card-text>
           <v-card-text class="subtitulos"> Revisión N°: XX </v-card-text>
         </v-card>
@@ -74,7 +76,8 @@
       <v-row justify="start">
         <v-combobox
           v-if="
-            selectedDefectoLamina !== 'Ningún defecto' && selectedDefectoLamina !== ''
+            selectedDefectoLamina !== 'Ningún defecto' &&
+            selectedDefectoLamina !== ''
           "
           v-model="selectedCausaLamina"
           label="Causa de defecto en lamina"
@@ -105,7 +108,10 @@
 
       <v-row justify="start">
         <v-combobox
-          v-if="selectedDefectoCaja !== 'Ningún defecto' && selectedDefectoCaja !== ''"
+          v-if="
+            selectedDefectoCaja !== 'Ningún defecto' &&
+            selectedDefectoCaja !== ''
+          "
           v-model="selectedCausaCaja"
           label="Causa de defecto en caja"
           :items="causaCaja"
@@ -132,16 +138,33 @@
           max-rows="4"
         ></v-textarea>
       </v-row>
-      <v-btn type="submit" block class="mt-2" @click="mostrarAlerta"
-        >Enviar control</v-btn
-      >
+      <v-row>
+        <v-col
+          ><v-btn variant="tonal" block class="mt-2" color="green-darken-1" @click="mostrarAlerta"
+            >Enviar control</v-btn
+          ></v-col
+        >
+        <v-col
+          ><v-btn variant="tonal" block class="mt-2" color="red-darken-1" @click="retroceder"
+            >Retroceder</v-btn
+          ></v-col
+        >
+      </v-row>
+
       <v-dialog v-model="mostrarConfirmacion" max-width="500">
         <v-card>
           <v-card-title class="headline">Confirmación</v-card-title>
-          <v-card-text>¿Estás seguro de que quieres enviar este control?</v-card-text>
+          <v-card-text
+            >¿Estás seguro de que quieres enviar este control?</v-card-text
+          >
+          <v-card-text
+            >Al aceptar se generara un archivo pdf</v-card-text
+          >
           <v-card-actions>
-            <v-btn color="green darken-1" text @click="enviarControl">Sí</v-btn>
-            <v-btn color="red darken-1" text @click="cancelarEnvio">Cancelar</v-btn>
+            <v-btn variant="tonal" color="green darken-1" text @click="enviarControl">Sí</v-btn>
+            <v-btn variant="tonal" color="red darken-1" text @click="cancelarEnvio"
+              >Cancelar</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -306,7 +329,12 @@ export default {
           return;
         }
 
-        if (!this.validarSeleccion(this.defectosLamina, this.selectedDefectoLamina)) {
+        if (
+          !this.validarSeleccion(
+            this.defectosLamina,
+            this.selectedDefectoLamina
+          )
+        ) {
           this.mostrarSnackbar = true;
           this.mensajeSnackbar = "Defecto en lámina seleccionado no válido.";
           return;
@@ -317,7 +345,8 @@ export default {
           !this.selectedDefectoLaminaOtros.trim()
         ) {
           this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Ingrese detalles para 'Otros' en defecto en lámina.";
+          this.mensajeSnackbar =
+            "Ingrese detalles para 'Otros' en defecto en lámina.";
           return;
         }
 
@@ -327,11 +356,14 @@ export default {
           !this.validarSeleccion(this.causasLamina, this.selectedCausaLamina)
         ) {
           this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Causa de defecto en lámina seleccionada no válida.";
+          this.mensajeSnackbar =
+            "Causa de defecto en lámina seleccionada no válida.";
           return;
         }
 
-        if (!this.validarSeleccion(this.defectoCaja, this.selectedDefectoCaja)) {
+        if (
+          !this.validarSeleccion(this.defectoCaja, this.selectedDefectoCaja)
+        ) {
           this.mostrarSnackbar = true;
           this.mensajeSnackbar = "Defecto en caja seleccionado no válido.";
           return;
@@ -342,7 +374,8 @@ export default {
           !this.selectedDefectoCajaOtros.trim()
         ) {
           this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Ingrese detalles para 'Otros' en defecto en caja.";
+          this.mensajeSnackbar =
+            "Ingrese detalles para 'Otros' en defecto en caja.";
           return;
         }
 
@@ -352,7 +385,8 @@ export default {
           !this.validarSeleccion(this.causaCaja, this.selectedCausaCaja)
         ) {
           this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Causa de defecto en caja seleccionada no válida.";
+          this.mensajeSnackbar =
+            "Causa de defecto en caja seleccionada no válida.";
           return;
         }
 
@@ -404,7 +438,8 @@ export default {
           pdfMake.createPdf(pdfDefinition).open();
           // Opción para descargar el PDF directamente:
           // pdfMake.createPdf(pdfDefinition).download('nombre_del_archivo.pdf');
-          this.mensajeSnackbar = "Documento enviado con éxito.";
+          this.$router.push("/")
+          this.mensajeSnackbar = "Documento creado con éxito.";
           this.mostrarSnackbar = true;
         } else {
           this.mensajeSnackbar = "Error al enviar el documento 1.";
@@ -420,8 +455,16 @@ export default {
     generarPdf(data) {
       const pdfDefinition = {
         content: [
-          { text: "CONTROL DE DESPERDICIO", style: "header", alignment: "center" },
-          { text: "Código documento: XX", style: "subheader", alignment: "center" },
+          {
+            text: "CONTROL DE DESPERDICIO",
+            style: "header",
+            alignment: "center",
+          },
+          {
+            text: "Código documento: XX",
+            style: "subheader",
+            alignment: "center",
+          },
           { text: "Revisión N°: X", style: "subheader", alignment: "center" },
           {
             style: "tableExample",
@@ -508,6 +551,9 @@ export default {
     },
     cancelarEnvio() {
       this.mostrarConfirmacion = false; // Cerrar la alerta si se cancela el envío
+    },
+    retroceder() {
+      this.$router.push("/");
     },
   },
 };
