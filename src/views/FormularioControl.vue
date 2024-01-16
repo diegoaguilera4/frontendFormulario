@@ -9,8 +9,8 @@
           <v-card-text class="subtitulos">
             Hoja de control de pérdida
           </v-card-text>
-          <v-card-text class="subtitulos"> Código documento: XX </v-card-text>
           <v-card-text class="subtitulos"> Revisión N°: XX </v-card-text>
+          <v-card-text class="subtitulos">Fecha: {{ currentDate }}</v-card-text>
         </v-card>
       </v-row>
       <v-row justify="start" style="margin-top: 25px">
@@ -179,6 +179,7 @@
 import axios from "axios";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import JsBarcode from 'jsbarcode';
 
 // Carga las fuentes necesarias para pdfmake
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -186,6 +187,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export default {
   data() {
     return {
+      currentDate: new Date().toLocaleDateString(),
       selectedArea: "",
       selectedAreaOtra: "",
       selectedTurno: "",
@@ -412,7 +414,6 @@ export default {
         }
 
         let res = await axios.post("http://localhost:3000/api/agregar", {
-          codigoDocumento: "X",
           nroRevision: 1,
           area: this.selectedArea,
           turno: parseInt(this.selectedTurno),
@@ -456,16 +457,21 @@ export default {
       const pdfDefinition = {
         content: [
           {
-            text: "CONTROL DE DESPERDICIO",
+            text: "                                                                                                                              ",
             style: "header",
             alignment: "center",
           },
           {
-            text: "Código documento: XX",
-            style: "subheader",
+            text: "                                          CONTROL DE DESPERDICIO                                          ",
+            style: "header",
             alignment: "center",
           },
-          { text: "Revisión N°: X", style: "subheader", alignment: "center" },
+          {
+            text: "                                                                                                                              ",
+            style: "header",
+            alignment: "center",
+          },
+          { text: "\nRevisión N°: X\n", style: "subheader", alignment: "center" },
           {
             style: "tableExample",
             table: {
@@ -486,6 +492,8 @@ export default {
           header: {
             fontSize: 20,
             bold: true,
+            background: "#FF0000", // Fondo rojo
+            color: "#FFFFFF", // Color de texto blanco
           },
         },
       };
@@ -543,6 +551,13 @@ export default {
           },
         }
       );
+
+      const canvas = document.createElement('canvas');
+      JsBarcode(canvas, data._id, { format: 'CODE128' });
+
+      // Convertir el canvas a imagen y agregarla al documento PDF
+      const imageData = canvas.toDataURL('image/png');
+      pdfDefinition.content.push({ image: imageData, alignment: "center" ,width: 300});
 
       return pdfDefinition;
     },

@@ -25,7 +25,7 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <p>Código documento: {{ editedItem.codigoDocumento }}</p>
+                  <p>Código documento: {{ editedItem._id }}</p>
                 </v-row>
                 <v-row
                   ><p>Revisión N°: {{ editedItem.nroRevision }}</p>
@@ -90,6 +90,7 @@
 import axios from "axios";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import JsBarcode from "jsbarcode";
 
 // Carga las fuentes necesarias para pdfmake
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -99,7 +100,7 @@ export default {
     dialog: false,
     dialogDelete: false,
     headers: [
-      { key: "codigoDocumento", title: "Código documento" },
+      { key: "_id", title: "Código documento" },
       { key: "nroRevision", title: "Revisión N°" },
       { key: "area", title: "Área" },
       { key: "fecha", title: "Fecha" },
@@ -111,7 +112,7 @@ export default {
     documentos: [],
     editedIndex: -1,
     editedItem: {
-      codigoDocumento: "",
+      _id: "",
       nroRevision: "",
       area: "",
       fecha: "",
@@ -119,7 +120,7 @@ export default {
       responsable: "",
     },
     defaultItem: {
-      codigoDocumento: "",
+      _id: "",
       nroRevision: "",
       area: "",
       fecha: "",
@@ -188,16 +189,25 @@ export default {
       const pdfDefinition = {
         content: [
           {
-            text: "CONTROL DE DESPERDICIO",
+            text: "                                                                                                                              ",
             style: "header",
             alignment: "center",
           },
           {
-            text: "Código documento: XX",
+            text: "                                          CONTROL DE DESPERDICIO                                          ",
+            style: "header",
+            alignment: "center",
+          },
+          {
+            text: "                                                                                                                              ",
+            style: "header",
+            alignment: "center",
+          },
+          {
+            text: "\nRevisión N°: X\n",
             style: "subheader",
             alignment: "center",
           },
-          { text: "Revisión N°: X", style: "subheader", alignment: "center" },
           {
             style: "tableExample",
             table: {
@@ -218,6 +228,8 @@ export default {
           header: {
             fontSize: 20,
             bold: true,
+            background: "#FF0000", // Fondo rojo
+            color: "#FFFFFF", // Color de texto blanco
           },
         },
       };
@@ -275,6 +287,14 @@ export default {
           },
         }
       );
+
+      const canvas = document.createElement("canvas");
+      JsBarcode(canvas, data._id, { format: "CODE128" });
+      // Redimensionar el canvas
+
+      // Convertir el canvas a imagen y agregarla al documento PDF
+      const imageData = canvas.toDataURL("image/png");
+      pdfDefinition.content.push({ image: imageData, alignment: "center" ,width: 300});
 
       return pdfDefinition;
     },
