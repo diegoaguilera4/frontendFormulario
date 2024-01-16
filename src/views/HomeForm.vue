@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <v-btn variant="outlined" @click="redirectToForm">Crear documento</v-btn>
     <TablaForm />
 
   </div>
@@ -14,10 +13,7 @@ export default {
     TablaForm,
   },
   methods: {
-    redirectToForm() {
-      // Puedes redirigir a la ruta del formulario aquí, por ejemplo:
-      this.$router.push("/form");
-    },
+    
   },
 };
 </script>

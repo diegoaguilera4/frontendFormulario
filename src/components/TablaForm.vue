@@ -8,6 +8,8 @@
       <v-toolbar flat>
         <v-toolbar-title>Documentos</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
+        <v-btn variant="tonal" @click="redirectToForm">Crear documento</v-btn>
+
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <v-card>
@@ -70,7 +72,7 @@
     </template>
     <template v-slot:[`item.actions`]="{ item }">
       <v-icon size="small" class="me-2" @click="editItem(item)">
-        mdi-pencil
+        mdi-eye
       </v-icon>
     </template>
     <template v-slot:no-data>
@@ -137,6 +139,10 @@ export default {
   },
 
   methods: {
+    redirectToForm() {
+      // Puedes redirigir a la ruta del formulario aquí, por ejemplo:
+      this.$router.push("/form");
+    },
     formatFecha(fecha) {
       // Formatea la fecha (cadena ISO 8601) a "DD-MM-YYYY"
       const parts = fecha.split("T")[0].split("-");
