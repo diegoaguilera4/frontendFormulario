@@ -5,6 +5,8 @@ import * as VueRouter from 'vue-router'
 import HomeForm from './views/HomeForm.vue'
 import FormularioControl from './views/FormularioControl.vue'
 import EditarDoc from './views/EditarDoc.vue'
+import EscanearBarra from './components/EscanearBarra.vue'
+import FormularioPeso from './views/FormularioPeso.vue'
 import App from './App.vue'
 loadFonts()
 
@@ -12,6 +14,9 @@ const routes = [
   { path: '/', component: HomeForm },
   { path: '/nuevoDocumento', name: 'NuevoDoc', component: FormularioControl },
   { path: '/editarDocumento/:id', name: 'EditarDoc', component: EditarDoc },
+  { path: '/escanear', name: 'Escanear', component: EscanearBarra },
+  { path: '/formPeso', name: 'FormPeso', component: FormularioPeso}
+
 ]
 
 // 3. Create the router instance and pass the `routes` option

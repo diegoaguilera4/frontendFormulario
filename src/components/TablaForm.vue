@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="filteredControles">
+  <v-data-table :headers="headers" :items="filteredControles" style="margin-top:20px">
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Documentos</v-toolbar-title>
@@ -11,9 +11,10 @@
           solo-inverted
           clearable
           @click:clear="clearSearch"
+          style="margin-top:20px"
         ></v-text-field>
         <v-divider class="mx-4" inset vertical></v-divider>
-        <v-btn variant="tonal" @click="redirectToForm">Crear documento</v-btn>
+        <v-btn variant="tonal" @click="irNuevoDoc">Crear documento</v-btn>
 
         <v-spacer></v-spacer>
 
@@ -138,6 +139,7 @@ export default {
       { key: "_id", title: "Código documento" },
       { key: "nroRevision", title: "Revisión N°" },
       { key: "area", title: "Área" },
+      { key: "areaOtra", title: "Otra área" },
       { key: "fecha", title: "Fecha" },
       { key: "turno", title: "Turno" },
       { key: "responsable", title: "Responsable" },
@@ -194,7 +196,7 @@ export default {
     clearSearch() {
       this.search = "";
     },
-    redirectToForm() {
+    irNuevoDoc() {
       // Puedes redirigir a la ruta del formulario aquí, por ejemplo:
       this.$router.push("/nuevoDocumento");
     },
@@ -228,7 +230,7 @@ export default {
     },
     async eliminarControl(id) {
       try {
-        await axios.delete(`http://localhost:3000/api/eliminar/${id}`);
+        await axios.delete(`${id}`);
         this.obtenerControles();
       } catch (error) {
         console.error(
@@ -299,3 +301,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  
+</style>
