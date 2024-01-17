@@ -25,34 +25,34 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <p>Código documento: {{ editedItem._id }}</p>
+                  <p>Código documento: {{ verItem._id }}</p>
                 </v-row>
                 <v-row
-                  ><p>Revisión N°: {{ editedItem.nroRevision }}</p>
+                  ><p>Revisión N°: {{ verItem.nroRevision }}</p>
                 </v-row>
                 <v-row>
-                  <p>Área: {{ editedItem.area }}</p>
+                  <p>Área: {{ verItem.area }}</p>
                 </v-row>
                 <v-row>
-                  <p>Fecha: {{ editedItem.fecha }}</p>
+                  <p>Fecha: {{ verItem.fecha }}</p>
                 </v-row>
                 <v-row>
-                  <p>Turno: {{ editedItem.turno }}</p>
+                  <p>Turno: {{ verItem.turno }}</p>
                 </v-row>
                 <v-row>
-                  <p>Responsable: {{ editedItem.responsable }}</p>
+                  <p>Responsable: {{ verItem.responsable }}</p>
                 </v-row>
                 <v-row>
-                  <p>Defecto en lamina: {{ editedItem.defectoEnLamina }}</p>
+                  <p>Defecto en lamina: {{ verItem.defectoEnLamina }}</p>
                 </v-row>
-                <v-row v-if="editedItem.defectoEnLamina !== 'Ningún defecto'">
-                  <p>Causa lamina: {{ editedItem.causaLamina }}</p>
+                <v-row v-if="verItem.defectoEnLamina !== 'Ningún defecto'">
+                  <p>Causa lamina: {{ verItem.causaLamina }}</p>
                 </v-row>
                 <v-row>
-                  <p>Defecto en caja: {{ editedItem.defectoEnCaja }}</p>
+                  <p>Defecto en caja: {{ verItem.defectoEnCaja }}</p>
                 </v-row>
-                <v-row v-if="editedItem.defectoEnCaja !== 'Ningún defecto'">
-                  <p>Causa caja: {{ editedItem.causaCaja }}</p>
+                <v-row v-if="verItem.defectoEnCaja !== 'Ningún defecto'">
+                  <p>Causa caja: {{ verItem.causaCaja }}</p>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -61,7 +61,7 @@
               <v-btn
                 color="red darken-1"
                 variant="tonal"
-                @click="crearPdf(editedItem)"
+                @click="crearPdf(verItem)"
               >
                 <v-icon left> mdi-file-pdf </v-icon>
                 Generar PDF
@@ -73,12 +73,37 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <v-dialog v-model="dialogDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="text-h5"
+              >¿Estas seguro que deseas eliminar este documento?</v-card-title
+            >
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="red-darken-1"
+                variant="tonal"
+                @click="deleteItemConfirm"
+                >Eliminar</v-btn
+              >
+              <v-btn color="blue-darken-1" variant="tonal" @click="closeDelete"
+                >Cancelar</v-btn
+              >
+              
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-toolbar>
     </template>
     <template v-slot:[`item.actions`]="{ item }">
-      <v-icon size="small" class="me-2" @click="editItem(item)">
+      <v-icon size="small" class="me-2" @click="mostrarItem(item)">
         mdi-eye
       </v-icon>
+      <v-icon size="small" class="me-2" @click="mostrarItem(item)">
+        mdi-pencil
+      </v-icon>
+      <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
     <template v-slot:no-data>
       <v-btn @click="initialize"> Recargar </v-btn>
@@ -110,8 +135,8 @@ export default {
     ],
     controles: [],
     documentos: [],
-    editedIndex: -1,
-    editedItem: {
+    verIndex: -1,
+    verItem: {
       _id: "",
       nroRevision: "",
       area: "",
@@ -169,19 +194,47 @@ export default {
       return `${parts[2]}-${parts[1]}-${parts[0]}`;
     },
     async obtenerControles() {
-      const response = await axios.get(
-        "http://localhost:3000/api/obtenerTodos"
-      );
-      this.controles = response.data;
-      this.controles.forEach((control) => {
-        control.fecha = this.formatFecha(control.fecha);
-      });
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/obtenerTodos"
+        );
+
+        // Verificar si la respuesta tiene datos
+        if (response.data) {
+          this.controles = response.data;
+
+          // Formatear las fechas
+          this.controles.forEach((control) => {
+            control.fecha = this.formatFecha(control.fecha);
+          });
+        } else {
+          console.error("La respuesta no contiene datos válidos.");
+          // Puedes lanzar una excepción personalizada o manejarla según tus necesidades.
+        }
+      } catch (error) {
+        console.error("Error al obtener los controles:", error.message);
+        // Puedes mostrar un mensaje al usuario, registrar el error o realizar otras acciones según tus necesidades.
+      }
     },
-    initialize() {},
+    async eliminarControl(id) {
+      try {
+        await axios.delete(`http://localhost:3000/api/eliminar/${id}`);
+        this.obtenerControles();
+      } catch (error) {
+        console.error(
+          `Error al eliminar el control con ID ${id}:`,
+          error.message
+        );
+        // Puedes mostrar un mensaje al usuario, registrar el error o realizar otras acciones según tus necesidades.
+      }
+    },
+    initialize() {
+      this.controles = [];
+      this.obtenerControles();
+    },
     crearPdf(data) {
       // Generar el PDF
       const pdf = this.generarPdf(data);
-
       // Abre el PDF en una nueva ventana
       pdfMake.createPdf(pdf).open();
     },
@@ -294,49 +347,54 @@ export default {
 
       // Convertir el canvas a imagen y agregarla al documento PDF
       const imageData = canvas.toDataURL("image/png");
-      pdfDefinition.content.push({ image: imageData, alignment: "center" ,width: 300});
+      pdfDefinition.content.push({
+        image: imageData,
+        alignment: "center",
+        width: 300,
+      });
 
       return pdfDefinition;
     },
 
-    editItem(item) {
-      this.editedIndex = this.controles.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+    mostrarItem(item) {
+      this.verIndex = this.controles.indexOf(item);
+      this.verItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.controles.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.verIndex = this.controles.indexOf(item);
+      this.verItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      this.controles.splice(this.editedIndex, 1);
+      this.eliminarControl(this.verItem._id);
+      this.controles.splice(this.verIndex, 1);
       this.closeDelete();
     },
 
     close() {
       this.dialog = false;
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
+        this.verItem = Object.assign({}, this.defaultItem);
+        this.verIndex = -1;
       });
     },
 
     closeDelete() {
       this.dialogDelete = false;
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
+        this.verItem = Object.assign({}, this.defaultItem);
+        this.verIndex = -1;
       });
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.controles[this.editedIndex], this.editedItem);
+      if (this.verIndex > -1) {
+        Object.assign(this.controles[this.verIndex], this.verItem);
       } else {
-        this.controles.push(this.editedItem);
+        this.controles.push(this.verItem);
       }
       this.close();
     },
