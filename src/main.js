@@ -4,12 +4,14 @@ import { loadFonts } from './plugins/webfontloader'
 import * as VueRouter from 'vue-router'
 import HomeForm from './views/HomeForm.vue'
 import FormularioControl from './views/FormularioControl.vue'
+import EditarDoc from './views/EditarDoc.vue'
 import App from './App.vue'
 loadFonts()
 
 const routes = [
   { path: '/', component: HomeForm },
-  { path: '/form', component: FormularioControl },
+  { path: '/nuevoDocumento', name: 'NuevoDoc', component: FormularioControl },
+  { path: '/editarDocumento/:id', name: 'EditarDoc', component: EditarDoc },
 ]
 
 // 3. Create the router instance and pass the `routes` option

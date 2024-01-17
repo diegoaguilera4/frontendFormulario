@@ -10,7 +10,7 @@
             Hoja de control de pérdida
           </v-card-text>
           <v-card-text class="subtitulos"> Revisión N°: XX </v-card-text>
-          <v-card-text class="subtitulos">Fecha: {{ currentDate }}</v-card-text>
+          <v-card-text class="subtitulos">Fecha: {{ fechaDoc }}</v-card-text>
         </v-card>
       </v-row>
       <v-row justify="start" style="margin-top: 25px">
@@ -146,7 +146,7 @@
             class="mt-2"
             color="green-darken-1"
             @click="mostrarAlerta"
-            >Enviar control</v-btn
+            >Actualizar control</v-btn
           ></v-col
         >
         <v-col
@@ -156,7 +156,7 @@
             class="mt-2"
             color="red-darken-1"
             @click="retroceder"
-            >Retroceder</v-btn
+            >Cancelar</v-btn
           ></v-col
         >
       </v-row>
@@ -165,9 +165,9 @@
         <v-card>
           <v-card-title class="headline">Confirmación</v-card-title>
           <v-card-text
-            >¿Estás seguro de que quieres enviar este control?</v-card-text
+            >¿Estás seguro de que quieres actualizar este control?</v-card-text
           >
-          <v-card-text>Al aceptar se generara un archivo pdf</v-card-text>
+          <v-card-text>Al aceptar se generara un nuevo archivo pdf</v-card-text>
           <v-card-actions>
             <v-btn
               variant="tonal"
@@ -205,7 +205,8 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export default {
   data() {
     return {
-      currentDate: new Date().toLocaleDateString('es-ES',{ day: '2-digit', month: '2-digit', year: 'numeric' }),
+      id: "",
+      fechaDoc: "",
       selectedArea: "",
       selectedAreaOtra: "",
       selectedTurno: "",
@@ -324,6 +325,11 @@ export default {
       }
     },
   },
+  mounted() {
+    this.id = this.$route.params.id;
+    // Realiza acciones con el ID, por ejemplo, llama a obtenerDoc con el ID
+    this.obtenerDoc(this.id);
+  },
   methods: {
     validarSeleccion(lista, valor) {
       // Validar que el valor esté presente en la lista
@@ -421,7 +427,6 @@ export default {
           this.mensajeSnackbar = "Ingrese un total de kilos.";
           return;
         }
-
         let nuevoControl = {
           nroRevision: 1,
           area: this.selectedArea,
@@ -462,14 +467,13 @@ export default {
           }
         });
 
-        let res = await axios.post(
-          "http://localhost:3000/api/agregar",
+        let res = await axios.put(
+          `http://localhost:3000/api/actualizar/${this.id}`,
           nuevoControl
         );
 
-        if (res.status === 201) {
+        if (res.status === 200) {
           // Generar el PDF
-
           const pdfDefinition = generarPdf(res.data);
 
           // Abre el PDF en una nueva ventana o descárgalo
@@ -488,6 +492,40 @@ export default {
         this.mostrarSnackbar = true;
       } finally {
         this.mostrarConfirmacion = false; // Cerrar la alerta después de enviar
+      }
+    },
+    formatearFecha(fecha) {
+      const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', options);
+      return fechaFormateada;
+    },
+    async obtenerDoc(id) {
+      try {
+        let res = await axios.get(`http://localhost:3000/api/obtener/${id}`);
+        this.fechaDoc = this.formatearFecha(res.data.fecha);
+        this.selectedArea = res.data.area;
+        if(this.selectedArea === "Otra") {
+          this.selectedAreaOtra = res.data.areaOtra;
+        }
+        this.selectedTurno = res.data.turno.toString();
+        this.responsableRechazo = res.data.responsable;
+        this.selectedDefectoLamina = res.data.defectoEnLamina;
+        if(this.selectedDefectoLamina === "Otros") {
+          this.selectedDefectoLaminaOtros = res.data.defectoEnLaminaOtros;
+        }
+        this.selectedCausaLamina = res.data.causaLamina;
+        this.selectedDefectoCaja = res.data.defectoEnCaja;
+        if(this.selectedDefectoCaja === "Otros") {
+          this.selectedDefectoCajaOtros = res.data.defectoEnCajaOtros;
+        }
+        this.selectedCausaCaja = res.data.causaCaja;
+        this.autorizaPicar = res.data.autorizaPicar;
+        this.totalKilos = res.data.totalKilos;
+      } catch (error) {
+        console.error(
+          `Error al obtener el control con ID ${id}:`,
+          error.message
+        );
       }
     },
     mostrarAlerta() {

@@ -100,7 +100,7 @@
       <v-icon size="small" class="me-2" @click="mostrarItem(item)">
         mdi-eye
       </v-icon>
-      <v-icon size="small" class="me-2" @click="mostrarItem(item)">
+      <v-icon size="small" class="me-2" @click="editarItem(item)">
         mdi-pencil
       </v-icon>
       <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
@@ -186,7 +186,7 @@ export default {
     },
     redirectToForm() {
       // Puedes redirigir a la ruta del formulario aquí, por ejemplo:
-      this.$router.push("/form");
+      this.$router.push("/nuevoDocumento");
     },
     formatFecha(fecha) {
       // Formatea la fecha (cadena ISO 8601) a "DD-MM-YYYY"
@@ -244,6 +244,10 @@ export default {
       this.verIndex = this.controles.indexOf(item);
       this.verItem = Object.assign({}, item);
       this.dialog = true;
+    },
+    editarItem(item) {
+      //Enviar a EditarDoc con el id del item
+      this.$router.push({ name: "EditarDoc", params: { id: item._id } });
     },
 
     deleteItem(item) {

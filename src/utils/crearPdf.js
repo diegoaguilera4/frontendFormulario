@@ -28,7 +28,7 @@ export function generarPdf(data) {
           table: {
             widths: ["*", "*"],
             body: [
-              ["Área", data.area],
+              ["Área", data.area==="Otra" ? data.area+": "+data.areaOtra : data.area],
               ["Fecha", new Date().toLocaleDateString()],
               ["Turno", data.turno],
               ["Responsable del rechazo", data.responsable],
@@ -49,6 +49,7 @@ export function generarPdf(data) {
       },
     };
 
+
     // Verificar si hay defecto en lámina
     if (data.defectoEnLamina && data.defectoEnLamina !== "Ningún defecto") {
       pdfDefinition.content.push({
@@ -56,7 +57,7 @@ export function generarPdf(data) {
         table: {
           widths: ["*", "*"],
           body: [
-            ["Defecto en lámina", data.defectoEnLamina],
+            ["Defecto en lámina", data.defectoEnLamina==="Otros" ? data.defectoEnLamina+": "+data.defectoEnLaminaOtros : data.defectoEnLamina],
             ["Causa de defecto en lámina", data.causaLamina],
           ],
         },
@@ -70,7 +71,7 @@ export function generarPdf(data) {
         table: {
           widths: ["*", "*"],
           body: [
-            ["Defecto en caja", data.defectoEnCaja],
+            ["Defecto en caja", data.defectoEnCaja==="Otros" ? data.defectoEnCaja+": "+data.defectoEnCajaOtros : data.defectoEnCaja],
             ["Causa de defecto en caja", data.causaCaja],
           ],
         },
