@@ -186,8 +186,15 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-snackbar v-model="mostrarSnackbar" :timeout="3000">
-        {{ mensajeSnackbar }}
+      <v-snackbar v-model="mostrarSnackbar" vertical style="top: 10px">
+        <div class="text-subtitle-1 pb-2">Hay un error existente:</div>
+        <div class="text-subtitle-1 pb-2">{{ mensajeSnackbar }}</div>
+
+        <template v-slot:actions>
+          <v-btn color="indigo" variant="text" @click="mostrarSnackbar = false">
+            Cerrar
+          </v-btn>
+        </template>
       </v-snackbar>
     </v-form>
   </v-sheet>
@@ -205,7 +212,11 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export default {
   data() {
     return {
-      currentDate: new Date().toLocaleDateString('es-ES',{ day: '2-digit', month: '2-digit', year: 'numeric' }),
+      currentDate: new Date().toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }),
       selectedArea: "",
       selectedAreaOtra: "",
       selectedTurno: "",

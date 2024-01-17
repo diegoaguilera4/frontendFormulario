@@ -10,6 +10,7 @@
           label="Buscar"
           solo-inverted
           clearable
+          @click:clear="clearSearch"
         ></v-text-field>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-btn variant="tonal" @click="redirectToForm">Crear documento</v-btn>
@@ -106,7 +107,7 @@
       <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
     <template v-slot:no-data>
-      <v-btn @click="initialize"> Recargar </v-btn>
+      <v-text>No existen resultados</v-text>
     </template>
   </v-data-table>
 </template>
