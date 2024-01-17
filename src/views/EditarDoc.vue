@@ -186,9 +186,21 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-snackbar v-model="mostrarSnackbar" :timeout="3000">
-        {{ mensajeSnackbar }}
-      </v-snackbar>
+      <v-dialog v-model="mostrarError" width="500">
+        <template v-slot:default="{ isActive }">
+          <v-card title="Hay un error existente:">
+            <v-card-text>
+              {{ mensajeError }}
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+
+              <v-btn text="Cerrar" @click="isActive.value = false"></v-btn>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-dialog>
     </v-form>
   </v-sheet>
 </template>
@@ -307,8 +319,8 @@ export default {
         "Ensayos",
       ],
       mostrarConfirmacion: false,
-      mostrarSnackbar: false,
-      mensajeSnackbar: "",
+      mostrarError: false,
+      mensajeError: "",
     };
   },
   watch: {
@@ -338,20 +350,20 @@ export default {
     async enviarControl() {
       try {
         if (!this.validarSeleccion(this.areas, this.selectedArea)) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Área seleccionada no válida.";
+          this.mostrarError = true;
+          this.mensajeError = "Área seleccionada no válida.";
           return;
         }
 
         if (!this.validarSeleccion(["1", "2", "3"], this.selectedTurno)) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Turno seleccionado no válido.";
+          this.mostrarError = true;
+          this.mensajeError = "Turno seleccionado no válido.";
           return;
         }
 
         if (this.responsableRechazo === "") {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Ingrese un responsable de rechazo.";
+          this.mostrarError = true;
+          this.mensajeError = "Ingrese un responsable de rechazo.";
           return;
         }
 
@@ -361,8 +373,8 @@ export default {
             this.selectedDefectoLamina
           )
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Defecto en lámina seleccionado no válido.";
+          this.mostrarError = true;
+          this.mensajeError = "Defecto en lámina seleccionado no válido.";
           return;
         }
 
@@ -370,8 +382,8 @@ export default {
           this.selectedDefectoLamina === "Otros" &&
           !this.selectedDefectoLaminaOtros.trim()
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar =
+          this.mostrarError = true;
+          this.mensajeError =
             "Ingrese detalles para 'Otros' en defecto en lámina.";
           return;
         }
@@ -381,8 +393,8 @@ export default {
           this.selectedDefectoLamina !== "Ningún defecto" &&
           !this.validarSeleccion(this.causasLamina, this.selectedCausaLamina)
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar =
+          this.mostrarError = true;
+          this.mensajeError =
             "Causa de defecto en lámina seleccionada no válida.";
           return;
         }
@@ -390,8 +402,8 @@ export default {
         if (
           !this.validarSeleccion(this.defectoCaja, this.selectedDefectoCaja)
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Defecto en caja seleccionado no válido.";
+          this.mostrarError = true;
+          this.mensajeError = "Defecto en caja seleccionado no válido.";
           return;
         }
 
@@ -399,8 +411,8 @@ export default {
           this.selectedDefectoCaja === "Otros" &&
           !this.selectedDefectoCajaOtros.trim()
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar =
+          this.mostrarError = true;
+          this.mensajeError =
             "Ingrese detalles para 'Otros' en defecto en caja.";
           return;
         }
@@ -410,48 +422,35 @@ export default {
           this.selectedDefectoCaja !== "Ningún defecto" &&
           !this.validarSeleccion(this.causaCaja, this.selectedCausaCaja)
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar =
+          this.mostrarError = true;
+          this.mensajeError =
             "Causa de defecto en caja seleccionada no válida.";
           return;
         }
 
         if (this.autorizaPicar === "") {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Ingrese un autorizador de picar.";
+          this.mostrarError = true;
+          this.mensajeError = "Ingrese un autorizador de picar.";
           return;
         }
 
         if (this.totalKilos === "") {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Ingrese un total de kilos.";
+          this.mostrarError = true;
+          this.mensajeError = "Ingrese un total de kilos.";
           return;
         }
         let nuevoControl = {
           nroRevision: 1,
           area: this.selectedArea,
-          areaOtra:
-            this.selectedArea === "Otra" ? this.selectedAreaOtra : undefined,
+          areaOtra: this.selectedArea === "Otra" ? this.selectedAreaOtra : "",
           turno: parseInt(this.selectedTurno),
           responsable: this.responsableRechazo,
           defectoEnLamina: this.selectedDefectoLamina,
-          defectoEnLaminaOtros:
-            this.selectedDefectoLamina === "Otros"
-              ? this.selectedDefectoLaminaOtros
-              : undefined,
-          causaLamina:
-            this.selectedDefectoLamina !== "Ningún defecto"
-              ? this.selectedCausaLamina
-              : undefined,
+          defectoEnLaminaOtros: this.selectedDefectoLamina === "Otros" ? this.selectedDefectoLaminaOtros : "",
+          causaLamina: this.selectedCausaLamina !== "Ningún defecto" ? this.selectedCausaLamina : undefined,
           defectoEnCaja: this.selectedDefectoCaja,
-          defectoEnCajaOtros:
-            this.selectedDefectoCaja === "Otros"
-              ? this.selectedDefectoCajaOtros
-              : undefined,
-          causaCaja:
-            this.selectedDefectoCaja !== "Ningún defecto"
-              ? this.selectedCausaCaja
-              : undefined,
+          defectoEnCajaOtros: this.selectedDefectoCaja === "Otros" ? this.selectedDefectoCajaOtros : "",
+          causaCaja: this.selectedCausaCaja !== "Ningún defecto" ? this.selectedCausaCaja : undefined,
           operadorPicadora: "X",
           cliente: "X",
           producto: "X",
@@ -461,16 +460,11 @@ export default {
           totalKilos: this.totalKilos,
         };
 
-        Object.keys(nuevoControl).forEach((key) => {
-          if (nuevoControl[key] === undefined) {
-            delete nuevoControl[key];
-          }
-        });
-
         let res = await axios.put(
           `http://localhost:3000/api/actualizar/${this.id}`,
           nuevoControl
         );
+        
 
         if (res.status === 200) {
           // Generar el PDF
@@ -481,22 +475,25 @@ export default {
           // Opción para descargar el PDF directamente:
           // pdfMake.createPdf(pdfDefinition).download('nombre_del_archivo.pdf');
           this.$router.push("/");
-          this.mensajeSnackbar = "Documento creado con éxito.";
-          this.mostrarSnackbar = true;
+          this.mensajeError = "Documento creado con éxito.";
+          this.mostrarError = true;
         } else {
-          this.mensajeSnackbar = "Error al enviar el documento 1.";
-          this.mostrarSnackbar = true;
+          this.mensajeError = "Error al enviar el documento 1.";
+          this.mostrarError = true;
         }
       } catch (error) {
-        this.mensajeSnackbar = "Error al enviar el documento 2.";
-        this.mostrarSnackbar = true;
+        this.mensajeError = "Error al enviar el documento 2.";
+        this.mostrarError = true;
       } finally {
         this.mostrarConfirmacion = false; // Cerrar la alerta después de enviar
       }
     },
     formatearFecha(fecha) {
-      const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-      const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', options);
+      const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+      const fechaFormateada = new Date(fecha).toLocaleDateString(
+        "es-ES",
+        options
+      );
       return fechaFormateada;
     },
     async obtenerDoc(id) {
@@ -504,18 +501,18 @@ export default {
         let res = await axios.get(`http://localhost:3000/api/obtener/${id}`);
         this.fechaDoc = this.formatearFecha(res.data.fecha);
         this.selectedArea = res.data.area;
-        if(this.selectedArea === "Otra") {
+        if (this.selectedArea === "Otra") {
           this.selectedAreaOtra = res.data.areaOtra;
         }
         this.selectedTurno = res.data.turno.toString();
         this.responsableRechazo = res.data.responsable;
         this.selectedDefectoLamina = res.data.defectoEnLamina;
-        if(this.selectedDefectoLamina === "Otros") {
+        if (this.selectedDefectoLamina === "Otros") {
           this.selectedDefectoLaminaOtros = res.data.defectoEnLaminaOtros;
         }
         this.selectedCausaLamina = res.data.causaLamina;
         this.selectedDefectoCaja = res.data.defectoEnCaja;
-        if(this.selectedDefectoCaja === "Otros") {
+        if (this.selectedDefectoCaja === "Otros") {
           this.selectedDefectoCajaOtros = res.data.defectoEnCajaOtros;
         }
         this.selectedCausaCaja = res.data.causaCaja;
@@ -550,5 +547,13 @@ export default {
 .subtitulos {
   margin-bottom: -13px;
   text-align: center;
+}
+
+.centrar-alerta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 80%; /* Ajusta este valor según tus necesidades */
+  margin: 0 auto; /* Para centrar horizontalmente */
 }
 </style>

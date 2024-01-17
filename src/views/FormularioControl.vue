@@ -186,16 +186,21 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-snackbar v-model="mostrarSnackbar" vertical style="top: 10px">
-        <div class="text-subtitle-1 pb-2">Hay un error existente:</div>
-        <div class="text-subtitle-1 pb-2">{{ mensajeSnackbar }}</div>
+      <v-dialog v-model="mostrarError" width="500">
+        <template v-slot:default="{ isActive }">
+          <v-card title="Hay un error existente:">
+            <v-card-text>
+              {{ mensajeError }}
+            </v-card-text>
 
-        <template v-slot:actions>
-          <v-btn color="indigo" variant="text" @click="mostrarSnackbar = false">
-            Cerrar
-          </v-btn>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+
+              <v-btn text="Cerrar" @click="isActive.value = false"></v-btn>
+            </v-card-actions>
+          </v-card>
         </template>
-      </v-snackbar>
+      </v-dialog>
     </v-form>
   </v-sheet>
 </template>
@@ -317,8 +322,8 @@ export default {
         "Ensayos",
       ],
       mostrarConfirmacion: false,
-      mostrarSnackbar: false,
-      mensajeSnackbar: "",
+      mostrarError: false,
+      mensajeError: "",
     };
   },
   watch: {
@@ -343,20 +348,20 @@ export default {
     async enviarControl() {
       try {
         if (!this.validarSeleccion(this.areas, this.selectedArea)) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Área seleccionada no válida.";
+          this.mostrarError = true;
+          this.mensajeError = "Área seleccionada no válida.";
           return;
         }
 
         if (!this.validarSeleccion(["1", "2", "3"], this.selectedTurno)) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Turno seleccionado no válido.";
+          this.mostrarError = true;
+          this.mensajeError = "Turno seleccionado no válido.";
           return;
         }
 
         if (this.responsableRechazo === "") {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Ingrese un responsable de rechazo.";
+          this.mostrarError = true;
+          this.mensajeError = "Ingrese un responsable de rechazo.";
           return;
         }
 
@@ -366,8 +371,8 @@ export default {
             this.selectedDefectoLamina
           )
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Defecto en lámina seleccionado no válido.";
+          this.mostrarError = true;
+          this.mensajeError = "Defecto en lámina seleccionado no válido.";
           return;
         }
 
@@ -375,8 +380,8 @@ export default {
           this.selectedDefectoLamina === "Otros" &&
           !this.selectedDefectoLaminaOtros.trim()
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar =
+          this.mostrarError = true;
+          this.mensajeError =
             "Ingrese detalles para 'Otros' en defecto en lámina.";
           return;
         }
@@ -386,8 +391,8 @@ export default {
           this.selectedDefectoLamina !== "Ningún defecto" &&
           !this.validarSeleccion(this.causasLamina, this.selectedCausaLamina)
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar =
+          this.mostrarError = true;
+          this.mensajeError =
             "Causa de defecto en lámina seleccionada no válida.";
           return;
         }
@@ -395,8 +400,8 @@ export default {
         if (
           !this.validarSeleccion(this.defectoCaja, this.selectedDefectoCaja)
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Defecto en caja seleccionado no válido.";
+          this.mostrarError = true;
+          this.mensajeError = "Defecto en caja seleccionado no válido.";
           return;
         }
 
@@ -404,8 +409,8 @@ export default {
           this.selectedDefectoCaja === "Otros" &&
           !this.selectedDefectoCajaOtros.trim()
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar =
+          this.mostrarError = true;
+          this.mensajeError =
             "Ingrese detalles para 'Otros' en defecto en caja.";
           return;
         }
@@ -415,21 +420,21 @@ export default {
           this.selectedDefectoCaja !== "Ningún defecto" &&
           !this.validarSeleccion(this.causaCaja, this.selectedCausaCaja)
         ) {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar =
+          this.mostrarError = true;
+          this.mensajeError =
             "Causa de defecto en caja seleccionada no válida.";
           return;
         }
 
         if (this.autorizaPicar === "") {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Ingrese un autorizador de picar.";
+          this.mostrarError = true;
+          this.mensajeError = "Ingrese un autorizador de picar.";
           return;
         }
 
         if (this.totalKilos === "") {
-          this.mostrarSnackbar = true;
-          this.mensajeSnackbar = "Ingrese un total de kilos.";
+          this.mostrarError = true;
+          this.mensajeError = "Ingrese un total de kilos.";
           return;
         }
 
@@ -441,19 +446,13 @@ export default {
           turno: parseInt(this.selectedTurno),
           responsable: this.responsableRechazo,
           defectoEnLamina: this.selectedDefectoLamina,
-          defectoEnLaminaOtros:
-            this.selectedDefectoLamina === "Otros"
-              ? this.selectedDefectoLaminaOtros
-              : undefined,
+          defectoEnLaminaOtros: this.selectedDefectoLaminaOtros,
           causaLamina:
             this.selectedDefectoLamina !== "Ningún defecto"
               ? this.selectedCausaLamina
               : undefined,
           defectoEnCaja: this.selectedDefectoCaja,
-          defectoEnCajaOtros:
-            this.selectedDefectoCaja === "Otros"
-              ? this.selectedDefectoCajaOtros
-              : undefined,
+          defectoEnCajaOtros: this.selectedDefectoCajaOtros,
           causaCaja:
             this.selectedDefectoCaja !== "Ningún defecto"
               ? this.selectedCausaCaja
@@ -488,15 +487,15 @@ export default {
           // Opción para descargar el PDF directamente:
           // pdfMake.createPdf(pdfDefinition).download('nombre_del_archivo.pdf');
           this.$router.push("/");
-          this.mensajeSnackbar = "Documento creado con éxito.";
-          this.mostrarSnackbar = true;
+          this.mensajeError = "Documento creado con éxito.";
+          this.mostrarError = true;
         } else {
-          this.mensajeSnackbar = "Error al enviar el documento 1.";
-          this.mostrarSnackbar = true;
+          this.mensajeError = "Error al enviar el documento 1.";
+          this.mostrarError = true;
         }
       } catch (error) {
-        this.mensajeSnackbar = "Error al enviar el documento 2.";
-        this.mostrarSnackbar = true;
+        this.mensajeError = "Error al enviar el documento 2.";
+        this.mostrarError = true;
       } finally {
         this.mostrarConfirmacion = false; // Cerrar la alerta después de enviar
       }

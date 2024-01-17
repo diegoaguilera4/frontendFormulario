@@ -28,7 +28,7 @@ export function generarPdf(data) {
           table: {
             widths: ["*", "*"],
             body: [
-              ["Área", data.area==="Otra" ? data.area+": "+data.areaOtra : data.area],
+              ["Área", data.area==="Otra" ? data.areaOtra+" ("+data.area+")" : data.area],
               ["Fecha", new Date().toLocaleDateString()],
               ["Turno", data.turno],
               ["Responsable del rechazo", data.responsable],
@@ -57,7 +57,7 @@ export function generarPdf(data) {
         table: {
           widths: ["*", "*"],
           body: [
-            ["Defecto en lámina", data.defectoEnLamina==="Otros" ? data.defectoEnLamina+": "+data.defectoEnLaminaOtros : data.defectoEnLamina],
+            ["Defecto en lámina", data.defectoEnLamina==="Otros" ? data.defectoEnLaminaOtros+" ("+data.defectoEnLamina+")" : data.defectoEnLamina],
             ["Causa de defecto en lámina", data.causaLamina],
           ],
         },
@@ -71,7 +71,7 @@ export function generarPdf(data) {
         table: {
           widths: ["*", "*"],
           body: [
-            ["Defecto en caja", data.defectoEnCaja==="Otros" ? data.defectoEnCaja+": "+data.defectoEnCajaOtros : data.defectoEnCaja],
+            ["Defecto en caja", data.defectoEnCaja==="Otros" ? data.defectoEnCajaOtros+" ("+data.defectoEnCaja+")" : data.defectoEnCaja],
             ["Causa de defecto en caja", data.causaCaja],
           ],
         },
