@@ -432,9 +432,9 @@ export default {
           return;
         }
 
-        if (this.totalKilos === "") {
+        if (this.totalKilos === "" || isNaN(this.totalKilos)) {
           this.mostrarError = true;
-          this.mensajeError = "Ingrese un total de kilos.";
+          this.mensajeError = "Ingrese un total de kilos válido.";
           return;
         }
 
