@@ -135,16 +135,6 @@
               max-rows="4"
             ></v-textarea>
           </v-row>
-          <v-row justify="start">
-            <v-textarea
-              v-model="totalKilos"
-              label="Total kilos"
-              variant="outlined"
-              dense
-              rows="1"
-              max-rows="4"
-            ></v-textarea>
-          </v-row>
           <v-row>
             <v-col
               ><v-btn
@@ -242,7 +232,6 @@ export default {
       selectedCausaCaja: "",
       autorizaPicar: "",
       numeroOrden: "",
-      totalKilos: "",
       orden: {},
       areas: [
         "corrugadora",
@@ -474,12 +463,6 @@ export default {
           return;
         }
 
-        if (this.totalKilos === "" || isNaN(this.totalKilos)) {
-          this.mostrarError = true;
-          this.mensajeError = "Ingrese un total de kilos válido.";
-          return;
-        }
-
         let nuevoControl = {
           nroRevision: 1,
           area: this.selectedArea,
@@ -505,7 +488,6 @@ export default {
           cantidad: this.orden.QuantityOrdered,
           nroOp: this.numeroOrden,
           autorizaPicar: this.autorizaPicar,
-          totalKilos: this.totalKilos,
         };
 
         Object.keys(nuevoControl).forEach((key) => {

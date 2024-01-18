@@ -3,7 +3,7 @@
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
         <v-card class="card-no-border">
-          <v-card-title class="text-h6 text-md-h5 text-lg-h4 text-center" 
+          <v-card-title class="text-h6 text-md-h5 text-lg-h4 text-center"
             >Control de desperdicio</v-card-title
           >
           <v-card-text class="subtitulos">
@@ -130,6 +130,7 @@
           </v-row>
           <v-row justify="start">
             <v-textarea
+              v-if="totalKilos"
               v-model="totalKilos"
               label="Total kilos"
               variant="outlined"
@@ -437,12 +438,14 @@ export default {
           return;
         }
 
-        if (this.totalKilos === "" || isNaN(this.totalKilos)) {
-          this.mostrarError = true;
-          this.mensajeError = "Ingrese un total de kilos válido.";
-          return;
+        if (this.totalKilos) {
+          if (this.totalKilos === "" || isNaN(this.totalKilos)) {
+            this.mostrarError = true;
+            this.mensajeError = "Ingrese un total de kilos válido.";
+            return;
+          }
         }
-        
+
         let nuevoControl = {
           nroRevision: this.nroRevisionActual + 1,
           area: this.selectedArea,
@@ -468,7 +471,7 @@ export default {
               ? this.selectedCausaCaja
               : undefined,
           autorizaPicar: this.autorizaPicar,
-          totalKilos: this.totalKilos,
+          totalKilos: this.totalKilos ? this.totalKilos : undefined,
         };
 
         let res = await axios.put(

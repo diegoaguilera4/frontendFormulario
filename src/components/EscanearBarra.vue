@@ -9,15 +9,13 @@
             label="Código de barras"
           ></v-text-field>
         </v-row>
+        <v-row>
+          <v-checkbox label="Revisado"></v-checkbox>
+        </v-row>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions class="justify-center">
         <v-btn color="primary" @click="scanBarcode">Escanear</v-btn>
       </v-card-actions>
-      <div v-if="Object.keys(documento).length > 0">
-        <div class="text-body-1">Área: {{ documento.area }}</div>
-        <div class="text-body-1">Turno: {{ documento.turno }}</div>
-        <div class="text-body-1">Responsable: {{ documento.responsable }}</div>
-      </div>
     </v-card>
   </div>
 </template>

@@ -98,7 +98,7 @@ export function generarPdf(data) {
           widths: ["*", "*"],
           body: [
             ["Autoriza picar", data.autorizaPicar],
-            ["Total kilos", data.totalKilos],
+            ["Total kilos", data.totalKilos ? data.totalKilos : ""],
           ],
         },
       }
