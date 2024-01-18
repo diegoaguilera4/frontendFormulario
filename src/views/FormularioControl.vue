@@ -3,164 +3,172 @@
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
         <v-card class="card-no-border">
-          <v-card-title class="text-h6 text-md-h5 text-lg-h4"
+          <v-card-title class="text-h6 text-md-h5 text-lg-h4 text-center"
             >Control de desperdicio</v-card-title
           >
           <v-card-text class="subtitulos">
             Hoja de control de pérdida
           </v-card-text>
-          <v-card-text class="subtitulos"> Revisión N°: XX </v-card-text>
           <v-card-text class="subtitulos">Fecha: {{ currentDate }}</v-card-text>
+          <v-row justify="start" style="margin-top: 25px">
+            <v-combobox
+              v-model="selectedArea"
+              label="Area"
+              :items="areas"
+              variant="outlined"
+            ></v-combobox>
+          </v-row>
+
+          <v-row justify="start" v-if="selectedArea === 'Otra'">
+            <v-textarea
+              v-model="selectedAreaOtra"
+              label="Otra"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
+
+          <v-row justify="start">
+            <v-combobox
+              v-model="selectedTurno"
+              label="Turno"
+              :items="['1', '2', '3']"
+              variant="outlined"
+            ></v-combobox>
+          </v-row>
+
+          <v-row justify="start">
+            <v-textarea
+              v-model="responsableRechazo"
+              label="Responsable del rechazo"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
+
+          <v-row justify="start">
+            <v-combobox
+              v-model="selectedDefectoLamina"
+              label="Defecto en lamina"
+              :items="defectosLamina"
+              variant="outlined"
+            ></v-combobox>
+          </v-row>
+
+          <v-row justify="start" v-if="selectedDefectoLamina === 'Otros'">
+            <v-textarea
+              v-model="selectedDefectoLaminaOtros"
+              label="Otros"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
+
+          <v-row justify="start">
+            <v-combobox
+              v-if="
+                selectedDefectoLamina !== 'Ningún defecto' &&
+                selectedDefectoLamina !== ''
+              "
+              v-model="selectedCausaLamina"
+              label="Causa de defecto en lamina"
+              :items="causasLamina"
+              variant="outlined"
+            ></v-combobox>
+          </v-row>
+
+          <v-row justify="start">
+            <v-combobox
+              v-model="selectedDefectoCaja"
+              label="Defecto en caja"
+              :items="defectoCaja"
+              variant="outlined"
+            ></v-combobox>
+          </v-row>
+
+          <v-row justify="start" v-if="selectedDefectoCaja === 'Otros'">
+            <v-textarea
+              v-model="selectedDefectoCajaOtros"
+              label="Otros"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
+
+          <v-row justify="start">
+            <v-combobox
+              v-if="
+                selectedDefectoCaja !== 'Ningún defecto' &&
+                selectedDefectoCaja !== ''
+              "
+              v-model="selectedCausaCaja"
+              label="Causa de defecto en caja"
+              :items="causaCaja"
+              variant="outlined"
+            ></v-combobox>
+          </v-row>
+          <v-row justify="start">
+            <v-textarea
+              v-model="autorizaPicar"
+              label="Autoriza picar"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
+          <v-row justify="start">
+            <v-textarea
+              v-model="numeroOrden"
+              label="Número orden"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
+          <v-row justify="start">
+            <v-textarea
+              v-model="totalKilos"
+              label="Total kilos"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
+          <v-row>
+            <v-col
+              ><v-btn
+                variant="tonal"
+                block
+                class="mt-2"
+                color="green-darken-1"
+                @click="mostrarAlerta"
+                >Enviar control</v-btn
+              ></v-col
+            >
+            <v-col
+              ><v-btn
+                variant="tonal"
+                block
+                class="mt-2"
+                color="red-darken-1"
+                @click="retroceder"
+                >Retroceder</v-btn
+              ></v-col
+            >
+          </v-row>
         </v-card>
       </v-row>
-      <v-row justify="start" style="margin-top: 25px">
-        <v-combobox
-          v-model="selectedArea"
-          label="Area"
-          :items="areas"
-          variant="outlined"
-        ></v-combobox>
-      </v-row>
-
-      <v-row justify="start" v-if="selectedArea === 'Otra'">
-        <v-textarea
-          v-model="selectedAreaOtra"
-          label="Otra"
-          variant="outlined"
-          dense
-          rows="1"
-          max-rows="4"
-        ></v-textarea>
-      </v-row>
-
-      <v-row justify="start">
-        <v-combobox
-          v-model="selectedTurno"
-          label="Turno"
-          :items="['1', '2', '3']"
-          variant="outlined"
-        ></v-combobox>
-      </v-row>
-
-      <v-row justify="start">
-        <v-textarea
-          v-model="responsableRechazo"
-          label="Responsable del rechazo"
-          variant="outlined"
-          dense
-          rows="1"
-          max-rows="4"
-        ></v-textarea>
-      </v-row>
-
-      <v-row justify="start">
-        <v-combobox
-          v-model="selectedDefectoLamina"
-          label="Defecto en lamina"
-          :items="defectosLamina"
-          variant="outlined"
-        ></v-combobox>
-      </v-row>
-
-      <v-row justify="start" v-if="selectedDefectoLamina === 'Otros'">
-        <v-textarea
-          v-model="selectedDefectoLaminaOtros"
-          label="Otros"
-          variant="outlined"
-          dense
-          rows="1"
-          max-rows="4"
-        ></v-textarea>
-      </v-row>
-
-      <v-row justify="start">
-        <v-combobox
-          v-if="
-            selectedDefectoLamina !== 'Ningún defecto' &&
-            selectedDefectoLamina !== ''
-          "
-          v-model="selectedCausaLamina"
-          label="Causa de defecto en lamina"
-          :items="causasLamina"
-          variant="outlined"
-        ></v-combobox>
-      </v-row>
-
-      <v-row justify="start">
-        <v-combobox
-          v-model="selectedDefectoCaja"
-          label="Defecto en caja"
-          :items="defectoCaja"
-          variant="outlined"
-        ></v-combobox>
-      </v-row>
-
-      <v-row justify="start" v-if="selectedDefectoCaja === 'Otros'">
-        <v-textarea
-          v-model="selectedDefectoCajaOtros"
-          label="Otros"
-          variant="outlined"
-          dense
-          rows="1"
-          max-rows="4"
-        ></v-textarea>
-      </v-row>
-
-      <v-row justify="start">
-        <v-combobox
-          v-if="
-            selectedDefectoCaja !== 'Ningún defecto' &&
-            selectedDefectoCaja !== ''
-          "
-          v-model="selectedCausaCaja"
-          label="Causa de defecto en caja"
-          :items="causaCaja"
-          variant="outlined"
-        ></v-combobox>
-      </v-row>
-      <v-row justify="start">
-        <v-textarea
-          v-model="autorizaPicar"
-          label="Autoriza picar"
-          variant="outlined"
-          dense
-          rows="1"
-          max-rows="4"
-        ></v-textarea>
-      </v-row>
-      <v-row justify="start">
-        <v-textarea
-          v-model="totalKilos"
-          label="Total kilos"
-          variant="outlined"
-          dense
-          rows="1"
-          max-rows="4"
-        ></v-textarea>
-      </v-row>
-      <v-row>
-        <v-col
-          ><v-btn
-            variant="tonal"
-            block
-            class="mt-2"
-            color="green-darken-1"
-            @click="mostrarAlerta"
-            >Enviar control</v-btn
-          ></v-col
-        >
-        <v-col
-          ><v-btn
-            variant="tonal"
-            block
-            class="mt-2"
-            color="red-darken-1"
-            @click="retroceder"
-            >Retroceder</v-btn
-          ></v-col
-        >
-      </v-row>
-
       <v-dialog v-model="mostrarConfirmacion" max-width="500">
         <v-card>
           <v-card-title class="headline">Confirmación</v-card-title>
@@ -233,7 +241,9 @@ export default {
       selectedDefectoCajaOtros: "",
       selectedCausaCaja: "",
       autorizaPicar: "",
+      numeroOrden: "",
       totalKilos: "",
+      orden: {},
       areas: [
         "corrugadora",
         "ward1",
@@ -345,8 +355,23 @@ export default {
       // Validar que el valor esté presente en la lista
       return lista.includes(valor);
     },
+    async obtenerOrden() {
+      return axios
+        .get(`http://localhost:3000/sql/obtener/${this.numeroOrden}`)
+        .then((response) => response.data)
+        .catch((error) => {
+          console.error(
+            `Error al obtener la orden con ID ${this.numeroOrden}:`,
+            error.message
+          );
+          throw error; // Propaga el error
+        });
+    },
     async enviarControl() {
       try {
+        this.orden = await this.obtenerOrden();
+        console.log(this.orden);
+
         if (!this.validarSeleccion(this.areas, this.selectedArea)) {
           this.mostrarError = true;
           this.mensajeError = "Área seleccionada no válida.";
@@ -432,6 +457,12 @@ export default {
           return;
         }
 
+        if (this.numeroOrden === "") {
+          this.mostrarError = true;
+          this.mensajeError = "Verifique el numero de orden ingresado.";
+          return;
+        }
+
         if (this.totalKilos === "" || isNaN(this.totalKilos)) {
           this.mostrarError = true;
           this.mensajeError = "Ingrese un total de kilos válido.";
@@ -458,10 +489,10 @@ export default {
               ? this.selectedCausaCaja
               : undefined,
           operadorPicadora: "X",
-          cliente: "X",
-          producto: "X",
-          cantidad: 1,
-          nroOp: 1,
+          cliente: this.orden.CustomerName,
+          producto: this.orden.ProductDescription,
+          cantidad: this.orden.QuantityOrdered,
+          nroOp: this.numeroOrden,
           autorizaPicar: this.autorizaPicar,
           totalKilos: this.totalKilos,
         };
@@ -494,6 +525,7 @@ export default {
           this.mostrarError = true;
         }
       } catch (error) {
+        console.log(error);
         this.mensajeError = "Error al enviar el documento 2.";
         this.mostrarError = true;
       } finally {
@@ -516,7 +548,8 @@ export default {
 <style scoped>
 .card-no-border {
   border: none;
-  box-shadow: none;
+  width: 65%;
+  padding: 30px;
 }
 
 .subtitulos {

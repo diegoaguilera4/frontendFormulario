@@ -230,7 +230,7 @@ export default {
     },
     async eliminarControl(id) {
       try {
-        await axios.delete(`${id}`);
+        await axios.delete(`http://localhost:3000/api/eliminar/${id}`);
         this.obtenerControles();
       } catch (error) {
         console.error(

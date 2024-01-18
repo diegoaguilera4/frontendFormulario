@@ -3,41 +3,13 @@
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
         <v-card class="card-grande">
-          <v-card-title class="text-h6 text-md-h5 text-lg-h4"
-            >Titulo</v-card-title
+          <v-card-title class="text-h6 text-md-h5 text-lg-h4 text-center"
+            >Control desperdicio:</v-card-title
           >
           <v-card-text class="subtitulos"> N° revisión: {{ documento.nroRevision }}</v-card-text>
           <v-card-text class="subtitulos"> Área: {{ documento.area }}</v-card-text>
           <v-card-text class="subtitulos"> Turno: {{ documento.turno }}</v-card-text>
           <v-card-text class="subtitulos"> Responsable: {{ documento.responsable }}</v-card-text>
-          
-          <v-row justify="center">
-            <v-textarea
-              v-model="numeroOrden"
-              label="Número de orden"
-              variant="outlined"
-              dense
-              rows="1"
-              max-rows="4"
-            >
-              <template v-slot:append>
-                <v-btn
-                  @click="obtenerOrden()"
-                  variant="tonal"
-                  color="green-darken-1"
-                  style="width: 150px"
-                >
-                  Obtener orden
-                </v-btn>
-              </template>
-            </v-textarea>
-          </v-row>
-          <div v-if="Object.keys(orden).length > 0">
-            <v-card-text class="subtitulos"> EstNumber: {{ orden.EstNumber }}</v-card-text>
-            <v-card-text class="subtitulos"> Descripción: {{ orden.ProductDescription }}</v-card-text>
-            <v-card-text class="subtitulos"> Cliente: {{ orden.CustomerName }}</v-card-text>
-            <v-card-text class="subtitulos"> Cantidad: {{ orden.QuantityOrdered }}</v-card-text>
-          </div>
           <v-row justify="center">
             <v-textarea
               v-model="totalKilos"

@@ -19,7 +19,7 @@ export function generarPdf(data) {
           alignment: "center",
         },
         {
-          text: "\nRevisión N°: X\n",
+          text: "\nRevisión N°: "+data.nroRevision+"\n",
           style: "subheader",
           alignment: "center",
         },
