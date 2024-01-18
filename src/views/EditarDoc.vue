@@ -466,11 +466,6 @@ export default {
             this.selectedCausaCaja !== "Ningún defecto"
               ? this.selectedCausaCaja
               : undefined,
-          operadorPicadora: "X",
-          cliente: "X",
-          producto: "X",
-          cantidad: 1,
-          nroOp: 1,
           autorizaPicar: this.autorizaPicar,
           totalKilos: this.totalKilos,
         };
