@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <v-app>
-      <v-navigation-drawer v-model="drawer" absolute temporary>
+        <v-navigation-drawer v-model="drawer" absolute temporary>
         <v-list>
           <v-list-item @click="$router.push('/')">
             <v-list-item-title>Documentos</v-list-item-title>
@@ -18,25 +18,25 @@
       </v-app-bar>
 
       <v-main>
-        <TablaForm/>
+        <EscanearBarra/>
       </v-main>
     </v-app>
   </div>
 </template>
 
 <script>
-import TablaForm from "../components/TablaForm.vue";
+import EscanearBarra from "../components/EscanearBarra.vue";
 
 export default {
-  name: "HomeForm",
+  name: "HomeEscaneo",
   components: {
-    TablaForm,
+    EscanearBarra,
   },
   data() {
     return {
       drawer: false,
     };
-  }
+  },
 };
 </script>
 

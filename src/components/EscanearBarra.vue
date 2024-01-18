@@ -37,16 +37,16 @@ export default {
         const response = await axios.get(
           `http://localhost:3000/api/obtener/${this.barcode}`
         );
-        console.log(response.data);
         this.documento = response.data;
-        this.irFormPeso();
+        this.irFormPeso(this.documento._id);
         // Ahora tienes el documento y puedes hacer lo que necesites con él
       } catch (error) {
         console.error("Hubo un error al obtener el documento:", error);
       }
     },
-    irFormPeso() {
-      this.$router.push("/formPeso");
+    irFormPeso(id) {
+      //ir a formularioescaneo con el id
+      this.$router.push(`/formEscaneo/${id}`);
     },
   },
 };
