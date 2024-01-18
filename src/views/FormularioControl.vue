@@ -482,7 +482,6 @@ export default {
             this.selectedDefectoCaja !== "Ningún defecto"
               ? this.selectedCausaCaja
               : undefined,
-          operadorPicadora: "X",
           cliente: this.orden.CustomerName,
           producto: this.orden.ProductDescription,
           cantidad: this.orden.QuantityOrdered,

@@ -84,7 +84,6 @@ export function generarPdf(data) {
         table: {
           widths: ["*", "*"],
           body: [
-            ["Operador picadora", data.operadorPicadora],
             ["Cliente", data.cliente],
             ["Producto", data.producto],
             ["Cantidad", data.cantidad],

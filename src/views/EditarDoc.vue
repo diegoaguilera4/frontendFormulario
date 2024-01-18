@@ -458,7 +458,7 @@ export default {
               ? this.selectedDefectoLaminaOtros
               : "",
           causaLamina:
-            this.selectedCausaLamina !== "Ningún defecto"
+            this.selectedDefectoLamina !== "Ningún defecto"
               ? this.selectedCausaLamina
               : undefined,
           defectoEnCaja: this.selectedDefectoCaja,
@@ -467,7 +467,7 @@ export default {
               ? this.selectedDefectoCajaOtros
               : "",
           causaCaja:
-            this.selectedCausaCaja !== "Ningún defecto"
+            this.selectedDefectoCaja !== "Ningún defecto"
               ? this.selectedCausaCaja
               : undefined,
           autorizaPicar: this.autorizaPicar,

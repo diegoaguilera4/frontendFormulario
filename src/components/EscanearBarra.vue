@@ -10,7 +10,6 @@
           ></v-text-field>
         </v-row>
         <v-row>
-          <v-checkbox label="Revisado"></v-checkbox>
         </v-row>
       </v-card-text>
       <v-card-actions class="justify-center">
