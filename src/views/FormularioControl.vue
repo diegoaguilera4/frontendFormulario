@@ -369,8 +369,25 @@ export default {
     },
     async enviarControl() {
       try {
+        if (this.numeroOrden.trim() === "") {
+          this.mostrarError = true;
+          this.mensajeError = "Ingrese un número de orden válido.";
+          return;
+        }
+
         this.orden = await this.obtenerOrden();
-        console.log(this.orden);
+
+        // Verificar si se ha obtenido la orden correctamente
+        if (
+          !this.orden ||
+          Object.keys(this.orden).length === 0 ||
+          !this.orden.CustomerName
+        ) {
+          this.mostrarError = true;
+          this.mensajeError =
+            "Error al obtener la orden. Verifique el número de orden ingresado.";
+          return;
+        }
 
         if (!this.validarSeleccion(this.areas, this.selectedArea)) {
           this.mostrarError = true;
@@ -454,12 +471,6 @@ export default {
         if (this.autorizaPicar === "") {
           this.mostrarError = true;
           this.mensajeError = "Ingrese un autorizador de picar.";
-          return;
-        }
-
-        if (this.numeroOrden === "") {
-          this.mostrarError = true;
-          this.mensajeError = "Verifique el numero de orden ingresado.";
           return;
         }
 
