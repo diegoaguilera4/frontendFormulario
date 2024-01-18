@@ -136,6 +136,20 @@
             ></v-textarea>
           </v-row>
           <v-row>
+            <v-checkbox v-model="checkbox" label="Revisado"></v-checkbox>
+          </v-row>
+          <v-row justify="start">
+            <v-textarea
+              v-if="checkbox"
+              v-model="totalKilos"
+              label="Total kilos"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
+          <v-row>
             <v-col
               ><v-btn
                 variant="tonal"
@@ -232,6 +246,8 @@ export default {
       selectedCausaCaja: "",
       autorizaPicar: "",
       numeroOrden: "",
+      totalKilos: "",
+      checkbox: false,
       orden: {},
       areas: [
         "corrugadora",

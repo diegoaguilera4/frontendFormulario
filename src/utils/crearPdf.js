@@ -29,7 +29,7 @@ export function generarPdf(data) {
             widths: ["*", "*"],
             body: [
               ["Área", data.area==="Otra" ? data.areaOtra+" ("+data.area+")" : data.area],
-              ["Fecha", new Date().toLocaleDateString()],
+              ["Fecha", data.fecha],
               ["Turno", data.turno],
               ["Responsable del rechazo", data.responsable],
             ],
@@ -78,30 +78,59 @@ export function generarPdf(data) {
       });
     }
 
-    pdfDefinition.content.push(
-      {
-        style: "tableExample",
-        table: {
-          widths: ["*", "*"],
-          body: [
-            ["Cliente", data.cliente],
-            ["Producto", data.producto],
-            ["Cantidad", data.cantidad],
-            ["Nro OP", data.nroOp],
-          ],
+    
+
+    if(data.totalKilos){
+      pdfDefinition.content.push(
+        {
+          style: "tableExample",
+          table: {
+            widths: ["*", "*"],
+            body: [
+              ["Cliente", data.cliente],
+              ["Producto", data.producto],
+              ["Cantidad", data.cantidad],
+              ["Nro OP", data.nroOp],
+            ],
+          },
         },
-      },
-      {
-        style: "tableExample",
-        table: {
-          widths: ["*", "*"],
-          body: [
-            ["Autoriza picar", data.autorizaPicar],
-            ["Total kilos", data.totalKilos ? data.totalKilos : ""],
-          ],
+        {
+          style: "tableExample",
+          table: {
+            widths: ["*", "*"],
+            body: [
+              ["Autoriza picar", data.autorizaPicar],
+              ["Total kilos", data.totalKilos],
+            ],
+          },
+        }
+      );
+    }
+    else{
+      pdfDefinition.content.push(
+        {
+          style: "tableExample",
+          table: {
+            widths: ["*", "*"],
+            body: [
+              ["Cliente", data.cliente],
+              ["Producto", data.producto],
+              ["Cantidad", data.cantidad],
+              ["Nro OP", data.nroOp],
+            ],
+          },
         },
-      }
-    );
+        {
+          style: "tableExample",
+          table: {
+            widths: ["*", "*"],
+            body: [
+              ["Autoriza picar", data.autorizaPicar],
+            ],
+          },
+        }
+      );
+    }
 
     const canvas = document.createElement("canvas");
     JsBarcode(canvas, data._id, { format: "CODE128" });
