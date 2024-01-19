@@ -74,7 +74,6 @@
         >
           Crear documento
         </v-btn>
-
         <v-dialog v-model="dialog" max-width="500px">
           <v-card>
             <v-card-title>
@@ -126,6 +125,21 @@
                 </v-row>
                 <v-row v-if="verItem.defectoEnCaja !== 'Ningún defecto'">
                   <p>Causa caja: {{ verItem.causaCaja }}</p>
+                </v-row>
+                <v-row>
+                  <p>N° Op: {{ verItem.nroOp }}</p>
+                </v-row>
+                <v-row>
+                  <p>EstNumber: {{ verItem.estNumber }}</p>
+                </v-row>
+                <v-row>
+                  <p>Producto: {{ verItem.producto }}</p>
+                </v-row>
+                <v-row>
+                  <p>Cliente: {{ verItem.cliente }}</p>
+                </v-row>
+                <v-row>
+                  <p>Cantidad: {{ verItem.cantidad }}</p>
                 </v-row>
               </v-container>
             </v-card-text>

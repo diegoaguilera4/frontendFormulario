@@ -3,10 +3,18 @@
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
         <v-card class="card-no-border">
-          <v-card-title class="text-h6 text-md-h5 text-lg-h4 text-center" style="background-color: #D90000; color: #FFFFFF;"
-            >Control de desperdicio</v-card-title
+          <v-card-title
+            class="text-h6 text-md-h5 text-lg-h4 text-center"
+            style="
+              background-color: #d90000;
+              color: #ffffff;
+              border-radius: 10px;
+            "
           >
-          <v-card-text class="subtitulos" style="margin-top:20px">
+            Control de desperdicio
+          </v-card-title>
+
+          <v-card-text class="subtitulos" style="margin-top: 20px">
             Hoja de control de pérdida
           </v-card-text>
           <v-card-text class="subtitulos">
@@ -136,6 +144,7 @@
                 block
                 class="mt-2"
                 color="green-darken-1"
+                append-icon="mdi-update"
                 @click="mostrarAlerta"
                 >Actualizar</v-btn
               ></v-col
@@ -147,6 +156,7 @@
                 class="mt-2"
                 color="red-darken-1"
                 @click="retroceder"
+                append-icon="mdi-arrow-left-bold-circle-outline"
                 >Cancelar</v-btn
               ></v-col
             >
@@ -167,6 +177,7 @@
               color="green darken-1"
               text
               @click="enviarControl"
+              append-icon="mdi-check-circle-outline"
               >Sí</v-btn
             >
             <v-btn
@@ -174,6 +185,7 @@
               color="red darken-1"
               text
               @click="cancelarEnvio"
+              append-icon="mdi-close-circle-outline"
               >Cancelar</v-btn
             >
           </v-card-actions>

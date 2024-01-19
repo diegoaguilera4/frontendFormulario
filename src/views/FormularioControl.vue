@@ -3,10 +3,18 @@
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
         <v-card class="card-no-border">
-          <v-card-title class="text-h6 text-md-h5 text-lg-h4 text-center" style="background-color: #D90000; color: #FFFFFF;"
-            >Control de desperdicio</v-card-title
+          <v-card-title
+            class="text-h6 text-md-h5 text-lg-h4 text-center"
+            style="
+              background-color: #d90000;
+              color: #ffffff;
+              border-radius: 10px;
+            "
           >
-          <v-card-text class="subtitulos" style="margin-top:20px">
+            Control de desperdicio
+          </v-card-title>
+
+          <v-card-text class="subtitulos" style="margin-top: 20px">
             Hoja de control de pérdida
           </v-card-text>
           <v-card-text class="subtitulos">Fecha: {{ currentDate }}</v-card-text>
@@ -126,7 +134,11 @@
             ></v-textarea>
           </v-row>
           <v-row>
-            <v-checkbox v-model="checkbox" label="Marcar peso" style="margin-top: -15px; margin-bottom: -15px;"></v-checkbox>
+            <v-checkbox
+              v-model="checkbox"
+              label="Marcar peso"
+              style="margin-top: -15px; margin-bottom: -15px"
+            ></v-checkbox>
           </v-row>
           <v-row justify="start">
             <v-textarea
@@ -147,7 +159,8 @@
                 class="mt-2"
                 color="green-darken-1"
                 @click="mostrarAlerta"
-                >Enviar</v-btn
+                append-icon="mdi-file-plus"
+                >Guardar</v-btn
               ></v-col
             >
             <v-col
@@ -157,6 +170,7 @@
                 class="mt-2"
                 color="red-darken-1"
                 @click="retroceder"
+                append-icon="mdi-arrow-left-bold-circle-outline"
                 >Retroceder</v-btn
               ></v-col
             >
@@ -176,6 +190,7 @@
               color="green darken-1"
               text
               @click="enviarControl"
+              append-icon="mdi-check-circle-outline"
               >Sí</v-btn
             >
             <v-btn
@@ -183,6 +198,7 @@
               color="red darken-1"
               text
               @click="cancelarEnvio"
+              append-icon="mdi-close-circle-outline"
               >Cancelar</v-btn
             >
           </v-card-actions>
@@ -469,18 +485,16 @@ export default {
 
         var kilosTrue = false;
 
-        if(this.checkbox === true){
-          if(this.totalKilos === ""){
+        if (this.checkbox === true) {
+          if (this.totalKilos === "") {
             this.mostrarError = true;
             this.mensajeError = "Ingrese un total de kilos.";
             return;
-          }
-          else if(isNaN(this.totalKilos)){
+          } else if (isNaN(this.totalKilos)) {
             this.mostrarError = true;
             this.mensajeError = "Ingrese un total de kilos válido.";
             return;
-          }
-          else{
+          } else {
             kilosTrue = true;
           }
         }
@@ -511,7 +525,7 @@ export default {
           estNumber: this.orden.EstNumber,
         };
 
-        if(kilosTrue){
+        if (kilosTrue) {
           nuevoControl.totalKilos = this.totalKilos;
         }
 
