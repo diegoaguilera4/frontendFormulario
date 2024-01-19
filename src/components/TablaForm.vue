@@ -1,49 +1,54 @@
 <template>
-  <v-row style="margin-top: 20px">
-    <v-col
-      ><v-text-field
+  <v-row style="margin-top: 20px; margin-left: 5px; margin-right: 5px">
+    <v-col>
+      <v-text-field
         v-model="search"
         label="Buscar"
         solo-inverted
         clearable
         @click:clear="clearSearch"
-      ></v-text-field
-    ></v-col>
-    <v-col
-      ><v-select
+        append-inner-icon="mdi-magnify"
+      ></v-text-field>
+    </v-col>
+    <v-col>
+      <v-select
         v-model="areaFilter"
         clearable
         chips
         label="Filtrar por área"
         :items="getUniqueValues('area')"
-      ></v-select
-    ></v-col>
-    <v-col
-      ><v-select
+        append-inner-icon="mdi-domain"
+      ></v-select>
+    </v-col>
+    <v-col>
+      <v-select
         v-model="turnoFilter"
         clearable
         chips
         label="Filtrar por turno"
         :items="getUniqueValues('turno')"
-      ></v-select
-    ></v-col>
-    <v-col
-      ><v-select
+        append-inner-icon="mdi-clock-time-four"
+      ></v-select>
+    </v-col>
+    <v-col>
+      <v-select
         v-model="responsableFilter"
         clearable
         chips
         label="Filtrar por responsable"
         :items="getUniqueValues('responsable')"
-      ></v-select
-    ></v-col>
+        append-inner-icon="mdi-account"
+      ></v-select>
+    </v-col>
+
     <v-col>
-      
-        <v-text-field
-          v-model="selectedDate"
-          label="Selecciona una fecha"
-          @click="toggleDatePicker"
-        ></v-text-field
-      >
+      <v-text-field
+        v-model="selectedDate"
+        label="Selecciona una fecha"
+        @click="toggleDatePicker"
+        append-inner-icon="mdi-calendar"
+        readonly
+      ></v-text-field>
       <v-row
         ><v-date-picker
           v-model="selectedDate"
@@ -57,13 +62,14 @@
   <v-data-table
     :headers="headers"
     :items="filteredControles"
-    style="margin-top: 20px"
+    style="margin-top: 20px; text-align: left"
   >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-btn variant="tonal" @click="irNuevoDoc">Crear documento</v-btn>
-
+        <v-toolbar-title>Documentos</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
+        <v-btn variant="tonal" append-icon="mdi-plus-circle"> Crear documento </v-btn>
 
         <v-dialog v-model="dialog" max-width="500px">
           <v-card>
@@ -191,7 +197,7 @@ export default {
       { key: "_id", title: "Código documento" },
       { key: "nroRevision", title: "Revisión N°" },
       { key: "area", title: "Área" },
-      { key: "fecha", title: "Fecha", sortBy: (a, b) => a.localeCompare(b)},
+      { key: "fecha", title: "Fecha", sortBy: (a, b) => a.localeCompare(b) },
       { key: "turno", title: "Turno" },
       { key: "responsable", title: "Responsable" },
       { title: "Actions", key: "actions", sortable: false },
