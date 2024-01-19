@@ -3,10 +3,10 @@
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
         <v-card class="card-no-border">
-          <v-card-title class="text-h6 text-md-h5 text-lg-h4 text-center"
+          <v-card-title class="text-h6 text-md-h5 text-lg-h4 text-center" style="background-color: #D90000; color: #FFFFFF;"
             >Control de desperdicio</v-card-title
           >
-          <v-card-text class="subtitulos">
+          <v-card-text class="subtitulos" style="margin-top:20px">
             Hoja de control de pérdida
           </v-card-text>
           <v-card-text class="subtitulos">Fecha: {{ currentDate }}</v-card-text>
@@ -126,7 +126,7 @@
             ></v-textarea>
           </v-row>
           <v-row>
-            <v-checkbox v-model="checkbox" label="Marcar peso"></v-checkbox>
+            <v-checkbox v-model="checkbox" label="Marcar peso" style="margin-top: -15px; margin-bottom: -15px;"></v-checkbox>
           </v-row>
           <v-row justify="start">
             <v-textarea
@@ -139,7 +139,7 @@
               max-rows="4"
             ></v-textarea>
           </v-row>
-          <v-row>
+          <v-row style="margin-top: -15px">
             <v-col
               ><v-btn
                 variant="tonal"
@@ -147,7 +147,7 @@
                 class="mt-2"
                 color="green-darken-1"
                 @click="mostrarAlerta"
-                >Enviar control</v-btn
+                >Enviar</v-btn
               ></v-col
             >
             <v-col
@@ -164,13 +164,13 @@
         </v-card>
       </v-row>
       <v-dialog v-model="mostrarConfirmacion" max-width="500">
-        <v-card>
+        <v-card class="text-center">
           <v-card-title class="headline">Confirmación</v-card-title>
           <v-card-text
             >¿Estás seguro de que quieres enviar este control?</v-card-text
           >
-          <v-card-text>Al aceptar se generara un archivo pdf</v-card-text>
-          <v-card-actions>
+          <v-card-text>Al aceptar se generará un archivo pdf</v-card-text>
+          <v-card-actions class="justify-center">
             <v-btn
               variant="tonal"
               color="green darken-1"
@@ -572,7 +572,7 @@ export default {
 }
 
 .subtitulos {
-  margin-bottom: -13px;
   text-align: center;
+  margin-bottom: -10px;
 }
 </style>

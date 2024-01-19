@@ -3,10 +3,10 @@
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
         <v-card class="card-no-border">
-          <v-card-title class="text-h6 text-md-h5 text-lg-h4 text-center"
+          <v-card-title class="text-h6 text-md-h5 text-lg-h4 text-center" style="background-color: #D90000; color: #FFFFFF;"
             >Control de desperdicio</v-card-title
           >
-          <v-card-text class="subtitulos">
+          <v-card-text class="subtitulos" style="margin-top:20px">
             Hoja de control de pérdida
           </v-card-text>
           <v-card-text class="subtitulos">
@@ -137,7 +137,7 @@
                 class="mt-2"
                 color="green-darken-1"
                 @click="mostrarAlerta"
-                >Actualizar control</v-btn
+                >Actualizar</v-btn
               ></v-col
             >
             <v-col
@@ -155,13 +155,13 @@
       </v-row>
 
       <v-dialog v-model="mostrarConfirmacion" max-width="500">
-        <v-card>
+        <v-card class="text-center">
           <v-card-title class="headline">Confirmación</v-card-title>
           <v-card-text
             >¿Estás seguro de que quieres actualizar este control?</v-card-text
           >
-          <v-card-text>Al aceptar se generara un nuevo archivo pdf</v-card-text>
-          <v-card-actions>
+          <v-card-text>Al aceptar se generará un nuevo archivo pdf</v-card-text>
+          <v-card-actions class="justify-center">
             <v-btn
               variant="tonal"
               color="green darken-1"
@@ -541,7 +541,7 @@ export default {
 }
 
 .subtitulos {
-  margin-bottom: -13px;
+  margin-bottom: -10px;
   text-align: center;
 }
 
