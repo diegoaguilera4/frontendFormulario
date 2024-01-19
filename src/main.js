@@ -8,6 +8,8 @@ import EditarDoc from './views/EditarDoc.vue'
 import FormularioEscaneo from './views/FormularioEscaneo.vue'
 import HomeEscaneo from './views/HomeEscaneo.vue'
 import App from './App.vue'
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 loadFonts()
 
 const routes = [
@@ -26,5 +28,5 @@ const router = VueRouter.createRouter({
 const app = createApp(App)
 app.use(router)
 app.use(vuetify)
-
+app.component('VueDatePicker', VueDatePicker);
 app.mount('#app')

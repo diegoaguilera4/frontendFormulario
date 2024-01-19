@@ -42,21 +42,16 @@
     </v-col>
 
     <v-col>
-      <v-text-field
-        v-model="selectedDate"
-        label="Selecciona una fecha"
-        @click="toggleDatePicker"
-        append-inner-icon="mdi-calendar"
-        readonly
-      ></v-text-field>
-      <v-row
-        ><v-date-picker
-          v-model="selectedDate"
-          @input="toggleDatePicker"
-          v-if="showDatePicker"
-          class="date-picker-overlay"
-        ></v-date-picker
-      ></v-row>
+      <VueDatePicker
+        v-model="date"
+        locale="es"
+        format="dd/MM/yyyy"
+        cancelText="Cancelar"
+        selectText="Seleccionar"
+        :enable-time-picker="false"
+        range
+        :partial-range="true"
+      />
     </v-col>
   </v-row>
   <v-data-table
@@ -69,7 +64,9 @@
         <v-toolbar-title>Documentos</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-btn variant="tonal" append-icon="mdi-plus-circle"> Crear documento </v-btn>
+        <v-btn variant="tonal" append-icon="mdi-plus-circle" @click="irNuevoDoc()"> 
+          Crear documento
+        </v-btn>
 
         <v-dialog v-model="dialog" max-width="500px">
           <v-card>
@@ -185,6 +182,7 @@ import axios from "axios";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { generarPdf } from "../utils/crearPdf";
+import { ref } from "vue";
 
 // Carga las fuentes necesarias para pdfmake
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -197,7 +195,7 @@ export default {
       { key: "_id", title: "Código documento" },
       { key: "nroRevision", title: "Revisión N°" },
       { key: "area", title: "Área" },
-      { key: "fecha", title: "Fecha", sortBy: (a, b) => a.localeCompare(b) },
+      { key: "fecha", title: "Fecha", sortBy: (a, b) => new Date(b) - new Date(a) },
       { key: "turno", title: "Turno" },
       { key: "responsable", title: "Responsable" },
       { title: "Actions", key: "actions", sortable: false },
@@ -226,6 +224,7 @@ export default {
     responsableFilter: null,
     selectedDate: null,
     showDatePicker: false,
+    date: new ref(),
   }),
 
   computed: {
@@ -289,8 +288,11 @@ export default {
       this.$router.push("/nuevoDocumento");
     },
     formatFecha(fecha) {
-      // Formatea la fecha (cadena ISO 8601) a "DD-MM-YYYY"
-      return new Date(fecha).toISOString();
+      const [year, month, day] = new Date(fecha)
+        .toISOString()
+        .slice(0, 10)
+        .split("-");
+      return `${day}-${month}-${year}`;
     },
     async obtenerControles() {
       try {
@@ -388,11 +390,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.date-picker-overlay {
-  position: absolute;
-  z-index: 1000; /* Ajusta el valor según sea necesario */
-  top: 200;
-  left: 10;
-}
-</style>
+<style scoped></style>
