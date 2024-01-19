@@ -1,19 +1,66 @@
 <template>
-  <v-data-table :headers="headers" :items="filteredControles" style="margin-top:20px">
+  <v-row style="margin-top: 20px">
+    <v-col
+      ><v-text-field
+        v-model="search"
+        label="Buscar"
+        solo-inverted
+        clearable
+        @click:clear="clearSearch"
+      ></v-text-field
+    ></v-col>
+    <v-col
+      ><v-select
+        v-model="areaFilter"
+        clearable
+        chips
+        label="Filtrar por área"
+        :items="getUniqueValues('area')"
+      ></v-select
+    ></v-col>
+    <v-col
+      ><v-select
+        v-model="turnoFilter"
+        clearable
+        chips
+        label="Filtrar por turno"
+        :items="getUniqueValues('turno')"
+      ></v-select
+    ></v-col>
+    <v-col
+      ><v-select
+        v-model="responsableFilter"
+        clearable
+        chips
+        label="Filtrar por responsable"
+        :items="getUniqueValues('responsable')"
+      ></v-select
+    ></v-col>
+    <v-col>
+      
+        <v-text-field
+          v-model="selectedDate"
+          label="Selecciona una fecha"
+          @click="toggleDatePicker"
+        ></v-text-field
+      >
+      <v-row
+        ><v-date-picker
+          v-model="selectedDate"
+          @input="toggleDatePicker"
+          v-if="showDatePicker"
+          class="date-picker-overlay"
+        ></v-date-picker
+      ></v-row>
+    </v-col>
+  </v-row>
+  <v-data-table
+    :headers="headers"
+    :items="filteredControles"
+    style="margin-top: 20px"
+  >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Documentos</v-toolbar-title>
-
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-text-field
-          v-model="search"
-          label="Buscar"
-          solo-inverted
-          clearable
-          @click:clear="clearSearch"
-          style="margin-top:20px"
-        ></v-text-field>
-        <v-divider class="mx-4" inset vertical></v-divider>
         <v-btn variant="tonal" @click="irNuevoDoc">Crear documento</v-btn>
 
         <v-spacer></v-spacer>
@@ -51,7 +98,10 @@
                   <p>Defecto en lamina: {{ verItem.defectoEnLamina }}</p>
                 </v-row>
                 <v-row v-if="verItem.defectoEnLaminaOtros">
-                  <p>Defecto en lamina: {{ verItem.defectoEnLaminaOtros }} (Otros)</p>
+                  <p>
+                    Defecto en lamina:
+                    {{ verItem.defectoEnLaminaOtros }} (Otros)
+                  </p>
                 </v-row>
                 <v-row v-if="verItem.defectoEnLamina !== 'Ningún defecto'">
                   <p>Causa lamina: {{ verItem.causaLamina }}</p>
@@ -60,7 +110,9 @@
                   <p>Defecto en caja: {{ verItem.defectoEnCaja }}</p>
                 </v-row>
                 <v-row v-if="verItem.defectoEnCajaOtros">
-                  <p>Defecto en caja: {{ verItem.defectoEnCajaOtros }} (Otros)</p>
+                  <p>
+                    Defecto en caja: {{ verItem.defectoEnCajaOtros }} (Otros)
+                  </p>
                 </v-row>
                 <v-row v-if="verItem.defectoEnCaja !== 'Ningún defecto'">
                   <p>Causa caja: {{ verItem.causaCaja }}</p>
@@ -100,7 +152,7 @@
               <v-btn color="blue-darken-1" variant="tonal" @click="closeDelete"
                 >Cancelar</v-btn
               >
-              
+
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -139,8 +191,7 @@ export default {
       { key: "_id", title: "Código documento" },
       { key: "nroRevision", title: "Revisión N°" },
       { key: "area", title: "Área" },
-      { key: "areaOtra", title: "Otra área" },
-      { key: "fecha", title: "Fecha" },
+      { key: "fecha", title: "Fecha", sortBy: (a, b) => a.localeCompare(b)},
       { key: "turno", title: "Turno" },
       { key: "responsable", title: "Responsable" },
       { title: "Actions", key: "actions", sortable: false },
@@ -164,15 +215,27 @@ export default {
       turno: "",
       responsable: "",
     },
+    areaFilter: null,
+    turnoFilter: null,
+    responsableFilter: null,
+    selectedDate: null,
+    showDatePicker: false,
   }),
 
   computed: {
     filteredControles() {
       return this.controles.filter((item) => {
-        return Object.values(item).some(
-          (value) =>
-            value &&
-            value.toString().toLowerCase().includes(this.search.toLowerCase())
+        return (
+          (this.searchFilter(item) || this.search === "") &&
+          (this.areaFilter === null ||
+            this.areaFilter === "" ||
+            item.area === this.areaFilter) &&
+          (this.turnoFilter === null ||
+            this.turnoFilter === "" ||
+            item.turno === this.turnoFilter) &&
+          (this.responsableFilter === null ||
+            this.responsableFilter === "" ||
+            item.responsable === this.responsableFilter)
         );
       });
     },
@@ -193,6 +256,25 @@ export default {
   },
 
   methods: {
+    getUniqueValues(columnKey) {
+      const uniqueValues = new Set();
+      this.filteredControles.forEach((item) => {
+        if (item[columnKey]) {
+          uniqueValues.add(item[columnKey]);
+        }
+      });
+      return Array.from(uniqueValues);
+    },
+    searchFilter(item) {
+      return Object.values(item).some(
+        (value) =>
+          value &&
+          value.toString().toLowerCase().includes(this.search.toLowerCase())
+      );
+    },
+    toggleDatePicker() {
+      this.showDatePicker = !this.showDatePicker;
+    },
     clearSearch() {
       this.search = "";
     },
@@ -202,8 +284,7 @@ export default {
     },
     formatFecha(fecha) {
       // Formatea la fecha (cadena ISO 8601) a "DD-MM-YYYY"
-      const parts = fecha.split("T")[0].split("-");
-      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+      return new Date(fecha).toISOString();
     },
     async obtenerControles() {
       try {
@@ -250,7 +331,6 @@ export default {
       // Abre el PDF en una nueva ventana
       pdfMake.createPdf(pdf).open();
     },
-    
 
     mostrarItem(item) {
       this.verIndex = this.controles.indexOf(item);
@@ -303,5 +383,10 @@ export default {
 </script>
 
 <style scoped>
-  
+.date-picker-overlay {
+  position: absolute;
+  z-index: 1000; /* Ajusta el valor según sea necesario */
+  top: 200;
+  left: 10;
+}
 </style>
