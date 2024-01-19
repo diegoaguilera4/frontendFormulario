@@ -43,7 +43,7 @@
 
     <v-col>
       <VueDatePicker
-        v-model="date"
+        v-model="filtroFecha"
         locale="es"
         format="dd/MM/yyyy"
         cancelText="Cancelar"
@@ -58,13 +58,20 @@
     :headers="headers"
     :items="filteredControles"
     style="margin-top: 20px; text-align: left"
+    items-per-page-text="Documentos por página"
+    page-text="{0}-{1} de {2}"
   >
+    
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Documentos</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-btn variant="tonal" append-icon="mdi-plus-circle" @click="irNuevoDoc()"> 
+        <v-btn
+          variant="tonal"
+          append-icon="mdi-plus-circle"
+          @click="irNuevoDoc()"
+        >
           Crear documento
         </v-btn>
 
@@ -195,7 +202,11 @@ export default {
       { key: "_id", title: "Código documento" },
       { key: "nroRevision", title: "Revisión N°" },
       { key: "area", title: "Área" },
-      { key: "fecha", title: "Fecha", sortBy: (a, b) => new Date(b) - new Date(a) },
+      {
+        key: "fecha",
+        title: "Fecha",
+        sortBy: (a, b) => new Date(b) - new Date(a),
+      },
       { key: "turno", title: "Turno" },
       { key: "responsable", title: "Responsable" },
       { title: "Actions", key: "actions", sortable: false },
@@ -224,25 +235,53 @@ export default {
     responsableFilter: null,
     selectedDate: null,
     showDatePicker: false,
-    date: new ref(),
+    filtroFecha: new ref(),
   }),
 
   computed: {
     filteredControles() {
-      return this.controles.filter((item) => {
-        return (
-          (this.searchFilter(item) || this.search === "") &&
-          (this.areaFilter === null ||
-            this.areaFilter === "" ||
-            item.area === this.areaFilter) &&
-          (this.turnoFilter === null ||
-            this.turnoFilter === "" ||
-            item.turno === this.turnoFilter) &&
-          (this.responsableFilter === null ||
-            this.responsableFilter === "" ||
-            item.responsable === this.responsableFilter)
-        );
-      });
+      const filtroFechaProxy = this.filtroFecha;
+      // Verificar si filtroFechaProxy está definido
+      if (filtroFechaProxy) {
+        const fecha1 = filtroFechaProxy[0];
+        const fecha2 = filtroFechaProxy[1];
+        fecha1.setHours(0, 0, 0, 0);
+        fecha2.setHours(23, 59, 59, 999);
+        return this.controles.filter((item) => {
+          //transformar item.date de dd-mm-yyyy a mm-dd-yyyy
+          const [day, month, year] = item.fecha.split("-");
+          const itemDate = new Date(`${month}-${day}-${year}`);
+          return (
+            (this.searchFilter(item) || this.search === "") &&
+            (this.areaFilter === null ||
+              this.areaFilter === "" ||
+              item.area === this.areaFilter) &&
+            (this.turnoFilter === null ||
+              this.turnoFilter === "" ||
+              item.turno === this.turnoFilter) &&
+            (this.responsableFilter === null ||
+              this.responsableFilter === "" ||
+              item.responsable === this.responsableFilter) &&
+            itemDate >= fecha1 &&
+            itemDate <= fecha2
+          );
+        });
+      } else {
+        return this.controles.filter((item) => {
+          return (
+            (this.searchFilter(item) || this.search === "") &&
+            (this.areaFilter === null ||
+              this.areaFilter === "" ||
+              item.area === this.areaFilter) &&
+            (this.turnoFilter === null ||
+              this.turnoFilter === "" ||
+              item.turno === this.turnoFilter) &&
+            (this.responsableFilter === null ||
+              this.responsableFilter === "" ||
+              item.responsable === this.responsableFilter)
+          );
+        });
+      }
     },
   },
 
