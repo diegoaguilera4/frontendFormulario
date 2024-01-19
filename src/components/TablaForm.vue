@@ -46,8 +46,8 @@
         v-model="filtroFecha"
         locale="es"
         format="dd/MM/yyyy"
-        cancelText="Cancelar"
-        selectText="Seleccionar"
+        cancelText="CANCELAR"
+        selectText="SELECCIONAR"
         :enable-time-picker="false"
         range
         :partial-range="true"
@@ -429,4 +429,6 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>
