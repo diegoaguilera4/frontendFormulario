@@ -117,16 +117,6 @@
           </v-row>
           <v-row justify="start">
             <v-textarea
-              v-model="autorizaPicar"
-              label="Autoriza picar"
-              variant="outlined"
-              dense
-              rows="1"
-              max-rows="4"
-            ></v-textarea>
-          </v-row>
-          <v-row justify="start">
-            <v-textarea
               v-model="numeroOrden"
               label="Número orden"
               variant="outlined"
@@ -136,7 +126,7 @@
             ></v-textarea>
           </v-row>
           <v-row>
-            <v-checkbox v-model="checkbox" label="Revisado"></v-checkbox>
+            <v-checkbox v-model="checkbox" label="Marcar peso"></v-checkbox>
           </v-row>
           <v-row justify="start">
             <v-textarea
@@ -244,7 +234,6 @@ export default {
       selectedDefectoCaja: "",
       selectedDefectoCajaOtros: "",
       selectedCausaCaja: "",
-      autorizaPicar: "",
       numeroOrden: "",
       totalKilos: "",
       checkbox: false,
@@ -360,6 +349,11 @@ export default {
       // Validar que el valor esté presente en la lista
       return lista.includes(valor);
     },
+    formatFecha(fecha) {
+      // Formatea la fecha (cadena ISO 8601) a "DD-MM-YYYY"
+      const parts = fecha.split("T")[0].split("-");
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    },
     async obtenerOrden() {
       return axios
         .get(`http://localhost:3000/sql/obtener/${this.numeroOrden}`)
@@ -473,10 +467,22 @@ export default {
           return;
         }
 
-        if (this.autorizaPicar === "") {
-          this.mostrarError = true;
-          this.mensajeError = "Ingrese un autorizador de picar.";
-          return;
+        var kilosTrue = false;
+
+        if(this.checkbox === true){
+          if(this.totalKilos === ""){
+            this.mostrarError = true;
+            this.mensajeError = "Ingrese un total de kilos.";
+            return;
+          }
+          else if(isNaN(this.totalKilos)){
+            this.mostrarError = true;
+            this.mensajeError = "Ingrese un total de kilos válido.";
+            return;
+          }
+          else{
+            kilosTrue = true;
+          }
         }
 
         let nuevoControl = {
@@ -502,8 +508,12 @@ export default {
           producto: this.orden.ProductDescription,
           cantidad: this.orden.QuantityOrdered,
           nroOp: this.numeroOrden,
-          autorizaPicar: this.autorizaPicar,
+          estNumber: this.orden.EstNumber,
         };
+
+        if(kilosTrue){
+          nuevoControl.totalKilos = this.totalKilos;
+        }
 
         Object.keys(nuevoControl).forEach((key) => {
           if (nuevoControl[key] === undefined) {
@@ -517,8 +527,9 @@ export default {
         );
 
         if (res.status === 201) {
-          // Generar el PDF
-
+          //formatear res.data.fecha
+          res.data.fecha = this.formatFecha(res.data.fecha);
+          //generar el pdf
           const pdfDefinition = generarPdf(res.data);
 
           // Abre el PDF en una nueva ventana o descárgalo

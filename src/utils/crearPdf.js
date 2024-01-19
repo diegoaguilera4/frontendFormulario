@@ -43,7 +43,7 @@ export function generarPdf(data) {
         header: {
           fontSize: 20,
           bold: true,
-          background: "#FF0000", // Fondo rojo
+          background: "#D90000", // Fondo rojo
           color: "#FFFFFF", // Color de texto blanco
         },
       },
@@ -78,7 +78,22 @@ export function generarPdf(data) {
       });
     }
 
-    
+    pdfDefinition.content.push(
+        {
+          style: "tableExample",
+          table: {
+            widths: ["*", "*"],
+            body: [
+              ["N° Op", data.nroOp],
+              ["EstNumber", data.estNumber],
+              ["Producto", data.producto],
+              ["Cliente", data.cliente],
+              ["Cantidad", data.cantidad],
+              
+            ],
+          },
+        },
+    )
 
     if(data.totalKilos){
       pdfDefinition.content.push(
@@ -87,45 +102,7 @@ export function generarPdf(data) {
           table: {
             widths: ["*", "*"],
             body: [
-              ["Cliente", data.cliente],
-              ["Producto", data.producto],
-              ["Cantidad", data.cantidad],
-              ["Nro OP", data.nroOp],
-            ],
-          },
-        },
-        {
-          style: "tableExample",
-          table: {
-            widths: ["*", "*"],
-            body: [
-              ["Autoriza picar", data.autorizaPicar],
               ["Total kilos", data.totalKilos],
-            ],
-          },
-        }
-      );
-    }
-    else{
-      pdfDefinition.content.push(
-        {
-          style: "tableExample",
-          table: {
-            widths: ["*", "*"],
-            body: [
-              ["Cliente", data.cliente],
-              ["Producto", data.producto],
-              ["Cantidad", data.cantidad],
-              ["Nro OP", data.nroOp],
-            ],
-          },
-        },
-        {
-          style: "tableExample",
-          table: {
-            widths: ["*", "*"],
-            body: [
-              ["Autoriza picar", data.autorizaPicar],
             ],
           },
         }

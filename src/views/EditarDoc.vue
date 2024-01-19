@@ -120,16 +120,6 @@
           </v-row>
           <v-row justify="start">
             <v-textarea
-              v-model="autorizaPicar"
-              label="Autoriza picar"
-              variant="outlined"
-              dense
-              rows="1"
-              max-rows="4"
-            ></v-textarea>
-          </v-row>
-          <v-row justify="start">
-            <v-textarea
               v-if="totalKilos"
               v-model="totalKilos"
               label="Total kilos"
@@ -233,7 +223,6 @@ export default {
       selectedDefectoCaja: "",
       selectedDefectoCajaOtros: "",
       selectedCausaCaja: "",
-      autorizaPicar: "",
       totalKilos: "",
       areas: [
         "corrugadora",
@@ -432,12 +421,6 @@ export default {
           return;
         }
 
-        if (this.autorizaPicar === "") {
-          this.mostrarError = true;
-          this.mensajeError = "Ingrese un autorizador de picar.";
-          return;
-        }
-
         if (this.totalKilos) {
           if (this.totalKilos === "" || isNaN(this.totalKilos)) {
             this.mostrarError = true;
@@ -470,7 +453,6 @@ export default {
             this.selectedDefectoCaja !== "Ningún defecto"
               ? this.selectedCausaCaja
               : undefined,
-          autorizaPicar: this.autorizaPicar,
           totalKilos: this.totalKilos ? this.totalKilos : undefined,
         };
 
@@ -530,7 +512,6 @@ export default {
           this.selectedDefectoCajaOtros = res.data.defectoEnCajaOtros;
         }
         this.selectedCausaCaja = res.data.causaCaja;
-        this.autorizaPicar = res.data.autorizaPicar;
         this.totalKilos = res.data.totalKilos;
       } catch (error) {
         console.error(
