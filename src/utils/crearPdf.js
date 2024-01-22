@@ -28,6 +28,7 @@ export function generarPdf(data) {
         table: {
           widths: ["*", "*"],
           body: [
+            [{ text: "Id control", style: "tableHeader" }, data._id],
             [
               { text: "Área", style: "tableHeader" },
               data.area === "Otra"
