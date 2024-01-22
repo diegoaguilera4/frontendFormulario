@@ -160,11 +160,11 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5"
-              >¿Estas seguro que deseas eliminar este documento?</v-card-title
-            >
+        <v-dialog v-model="dialogDelete" max-width="400px">
+          <v-card class="text-center" style="border-radius: 20px; padding: 10px">
+            <v-card-text>
+              ¿Estás seguro que deseas eliminar este documento?
+            </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
@@ -176,7 +176,6 @@
               <v-btn color="blue-darken-1" variant="tonal" @click="closeDelete"
                 >Cancelar</v-btn
               >
-
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
