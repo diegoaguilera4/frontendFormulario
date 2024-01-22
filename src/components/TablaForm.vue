@@ -154,7 +154,7 @@
                 <v-icon left color="red"> mdi-file-pdf </v-icon>
                 Generar PDF
               </v-btn>
-              <v-btn color="red-darken-1" variant="tonal" @click="close">
+              <v-btn color="red-darken-1" variant="tonal" @click="close" append-icon="mdi-close-circle-outline" >
                 Cerrar
               </v-btn>
             </v-card-actions>
@@ -171,9 +171,10 @@
                 color="red-darken-1"
                 variant="tonal"
                 @click="deleteItemConfirm"
+                append-icon="mdi-delete"
                 >Eliminar</v-btn
               >
-              <v-btn color="blue-darken-1" variant="tonal" @click="closeDelete"
+              <v-btn color="blue-darken-1" variant="tonal" @click="closeDelete" append-icon="mdi-close-circle-outline"
                 >Cancelar</v-btn
               >
               <v-spacer></v-spacer>

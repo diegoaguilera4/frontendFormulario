@@ -14,6 +14,7 @@
             color="red-darken-1"
             variant="tonal"
             @click="cerrarDialog"
+            append-icon="mdi-close-circle-outline"
           ></v-btn>
         </v-card-actions>
       </v-card>

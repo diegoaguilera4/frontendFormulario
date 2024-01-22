@@ -51,11 +51,11 @@
           </v-row>
           <v-row justify="center" style="margin-bottom:10px">
             <v-btn
-                color="red darken-1"
+                color="black"
                 variant="tonal"
-                @click="crearPdf(this.documento)"
+                @click="crearPdf(verItem)"
               >
-                <v-icon left> mdi-file-pdf </v-icon>
+                <v-icon left color="red"> mdi-file-pdf </v-icon>
                 Ver PDF
               </v-btn>
           </v-row>
