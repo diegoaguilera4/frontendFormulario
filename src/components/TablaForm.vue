@@ -75,7 +75,7 @@
           Crear documento
         </v-btn>
         <v-dialog v-model="dialog" max-width="500px">
-          <v-card>
+          <v-card style="border-radius: 20px; padding: 10px;">
             <v-card-title>
               <span class="text-h5">Documento</span>
             </v-card-title>

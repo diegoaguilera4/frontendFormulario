@@ -8,7 +8,7 @@
             style="
               background-color: #d90000;
               color: #ffffff;
-              border-radius: 10px;
+              border-radius: 20px;
             "
           >
             Control de desperdicio
@@ -171,14 +171,14 @@
                 color="red-darken-1"
                 @click="retroceder"
                 append-icon="mdi-arrow-left-bold-circle-outline"
-                >Retroceder</v-btn
+                >Cancelar</v-btn
               ></v-col
             >
           </v-row>
         </v-card>
       </v-row>
       <v-dialog v-model="mostrarConfirmacion" max-width="500">
-        <v-card class="text-center">
+        <v-card class="text-center" style="border-radius: 20px; padding: 10px;">
           <v-card-title class="headline">Confirmación</v-card-title>
           <v-card-text
             >¿Estás seguro de que quieres enviar este control?</v-card-text
@@ -206,15 +206,13 @@
       </v-dialog>
       <v-dialog v-model="mostrarError" width="500">
         <template v-slot:default="{ isActive }">
-          <v-card title="Hay un error existente:">
+          <v-card title="Hay un error existente:" style="border-radius: 20px; padding: 10px;">
             <v-card-text>
               {{ mensajeError }}
             </v-card-text>
-
             <v-card-actions>
               <v-spacer></v-spacer>
-
-              <v-btn text="Cerrar" @click="isActive.value = false"></v-btn>
+              <v-btn text="Cerrar" color="red-darken-1" variant="text" @click="isActive.value = false"></v-btn>
             </v-card-actions>
           </v-card>
         </template>
@@ -580,9 +578,10 @@ export default {
 
 <style scoped>
 .card-no-border {
-  border: none;
   width: 65%;
   padding: 30px;
+  border-radius: 5%;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.35);
 }
 
 .subtitulos {
