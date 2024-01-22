@@ -2,7 +2,7 @@
   <v-sheet width="1000" class="mx-auto mt-11">
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
-        <v-card class="card-no-border">
+        <v-card class="card-shadow">
           <v-card-title
             class="text-h6 text-md-h5 text-lg-h4 text-center"
             style="
@@ -552,10 +552,10 @@ export default {
 </script>
 
 <style scoped>
-.card-no-border {
+.card-shadow {
   width: 65%;
   padding: 30px;
-  border-radius: 5%;
+  border-radius: 30px;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.35);
 }
 

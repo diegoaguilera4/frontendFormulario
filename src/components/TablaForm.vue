@@ -131,7 +131,7 @@
                   <p>N° Op: {{ verItem.nroOp }}</p>
                 </v-row>
                 <v-row>
-                  <p>EstNumber: {{ verItem.estNumber }}</p>
+                  <p>Código: {{ verItem.estNumber }}</p>
                 </v-row>
                 <v-row>
                   <p>Producto: {{ verItem.producto }}</p>

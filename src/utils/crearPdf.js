@@ -110,7 +110,7 @@ export function generarPdf(data) {
       widths: ["*", "*"],
       body: [
         [{ text: "N° Op", style: "tableHeader" }, data.nroOp],
-        [{ text: "EstNumber", style: "tableHeader" }, data.estNumber],
+        [{ text: "Código", style: "tableHeader" }, data.estNumber],
         [{ text: "Producto", style: "tableHeader" }, data.producto],
         [{ text: "Cliente", style: "tableHeader" }, data.cliente],
         [{ text: "Cantidad", style: "tableHeader" }, data.cantidad],

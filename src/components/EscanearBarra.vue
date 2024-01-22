@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex justify-center align-center" style="height: 100vh">
-    <v-card>
-      <v-card-title>Escanea un código de barras</v-card-title>
+    <v-card class="card-sombra">
+      <v-card-title style="margin-bottom:20px">Escanea un código de barras</v-card-title>
       <v-card-text>
         <v-row align="center" justify="center">
           <v-text-field
@@ -13,7 +13,7 @@
         </v-row>
       </v-card-text>
       <v-card-actions class="justify-center">
-        <v-btn color="primary" @click="scanBarcode">Escanear</v-btn>
+        <v-btn color="primary" variant="tonal" @click="scanBarcode">Escanear</v-btn>
       </v-card-actions>
     </v-card>
   </div>
@@ -49,6 +49,11 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Estilos específicos para esta vista */
+<style>
+.card-sombra{
+  width: 30%;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.35);
+}
 </style>
