@@ -26,27 +26,11 @@
           >
         </v-card-actions>
       </v-card>
-      <v-dialog v-model="mostrarError" width="500">
-        <template v-slot:default="{ isActive }">
-          <v-card
-            title="Hay un error existente:"
-            style="border-radius: 20px; padding: 10px"
-          >
-            <v-card-text>
-              {{ mensajeError }}
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                text="Cerrar"
-                color="red-darken-1"
-                variant="text"
-                @click="isActive.value = false"
-              ></v-btn>
-            </v-card-actions>
-          </v-card>
-        </template>
-      </v-dialog>
+      <error-dialog
+        :mostrarError="mostrarError"
+        :mensajeError="mensajeError"
+        @cerrar-dialogo="cerrarDialogo"
+      />
       </v-row>
       
     </v-form>
@@ -55,7 +39,11 @@
 
 <script>
 import axios from "axios";
+import ErrorDialog from "./ErrorDialog.vue";
 export default {
+  components: {
+    ErrorDialog,
+  },
   data() {
     return {
       barcode: "",
@@ -95,6 +83,10 @@ export default {
     irFormPeso(id) {
       //ir a formularioescaneo con el id
       this.$router.push(`/formEscaneo/${id}`);
+    },
+    cerrarDialogo() {
+      // Manejar el evento para cerrar el diálogo en el componente padre
+      this.mostrarError = false;
     },
   },
 };

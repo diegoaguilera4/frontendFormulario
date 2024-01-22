@@ -12,7 +12,7 @@
           <v-btn
             text="Cerrar"
             color="red-darken-1"
-            variant="text"
+            variant="tonal"
             @click="cerrarDialog"
           ></v-btn>
         </v-card-actions>
