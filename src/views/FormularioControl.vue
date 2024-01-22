@@ -2,7 +2,7 @@
   <v-sheet width="1000" class="mx-auto mt-11">
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
-        <v-card class="card-shadow">
+        <v-card class="card-shadow" style="padding: 50px">
           <v-card-title
             class="text-h6 text-md-h5 text-lg-h4 text-center"
             style="
@@ -136,9 +136,13 @@
           <v-row>
             <v-checkbox
               v-model="checkbox"
-              label="Marcar peso"
               style="margin-top: -15px; margin-bottom: -15px"
-            ></v-checkbox>
+            >
+              <template v-slot:label>
+                <span>Marcar peso</span>
+                <v-icon>mdi-weight-kilogram</v-icon>
+              </template>
+            </v-checkbox>
           </v-row>
           <v-row justify="start">
             <v-textarea
@@ -178,7 +182,7 @@
         </v-card>
       </v-row>
       <v-dialog v-model="mostrarConfirmacion" max-width="500">
-        <v-card class="text-center" style="border-radius: 20px; padding: 10px;">
+        <v-card class="text-center" style="border-radius: 20px; padding: 10px">
           <v-card-title class="headline">Confirmación</v-card-title>
           <v-card-text
             >¿Estás seguro de que quieres enviar este control?</v-card-text
@@ -204,7 +208,11 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <error-dialog :mostrarError="mostrarError" :mensajeError="mensajeError" @cerrar-dialogo="cerrarDialogo" />
+      <error-dialog
+        :mostrarError="mostrarError"
+        :mensajeError="mensajeError"
+        @cerrar-dialogo="cerrarDialogo"
+      />
     </v-form>
   </v-sheet>
 </template>

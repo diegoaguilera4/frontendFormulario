@@ -77,8 +77,8 @@
         </v-btn>
         <v-dialog v-model="dialog" max-width="500px">
           <v-card style="border-radius: 20px; padding: 10px">
-            <v-card-title>
-              <span class="text-h5">Documento</span>
+            <v-card-title class="text-center">
+              Documento
             </v-card-title>
 
             <v-card-text>
@@ -145,17 +145,16 @@
               </v-container>
             </v-card-text>
 
-            <v-card-actions>
+            <v-card-actions class="justify-center">
               <v-btn
-                color="red darken-1"
+                color="black"
                 variant="tonal"
                 @click="crearPdf(verItem)"
               >
-                <v-icon left> mdi-file-pdf </v-icon>
+                <v-icon left color="red"> mdi-file-pdf </v-icon>
                 Generar PDF
               </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn color="red-darken-1" variant="text" @click="close">
+              <v-btn color="red-darken-1" variant="tonal" @click="close">
                 Cerrar
               </v-btn>
             </v-card-actions>

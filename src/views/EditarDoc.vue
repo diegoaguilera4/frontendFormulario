@@ -2,7 +2,7 @@
   <v-sheet width="1000" class="mx-auto mt-11">
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
-        <v-card class="card-shadow">
+        <v-card class="card-shadow" style="padding: 50px;">
           <v-card-title
             class="text-h6 text-md-h5 text-lg-h4 text-center"
             style="
