@@ -13,15 +13,11 @@
           >
             Control de desperdicio
           </v-card-title>
-
           <v-card-text class="subtitulos" style="margin-top: 20px">
-            Hoja de control de pérdida
-          </v-card-text>
-          <v-card-text class="subtitulos">
             Revisión N°: {{ nroRevisionActual }}
           </v-card-text>
           <v-card-text class="subtitulos">Fecha: {{ fechaDoc }}</v-card-text>
-          <v-row justify="start" style="margin-top: 25px">
+          <v-row justify="start" style="margin-top: 20px">
             <v-combobox
               v-model="selectedArea"
               label="Area"
@@ -191,27 +187,11 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="mostrarError" width="500">
-        <template v-slot:default="{ isActive }">
-          <v-card
-            title="Hay un error existente:"
-            style="border-radius: 20px; padding: 10px"
-          >
-            <v-card-text>
-              {{ mensajeError }}
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                text="Cerrar"
-                color="red-darken-1"
-                variant="text"
-                @click="isActive.value = false"
-              ></v-btn>
-            </v-card-actions>
-          </v-card>
-        </template>
-      </v-dialog>
+      <error-dialog
+        :mostrarError="mostrarError"
+        :mensajeError="mensajeError"
+        @cerrar-dialogo="cerrarDialogo"
+      />
     </v-form>
   </v-sheet>
 </template>
@@ -221,11 +201,15 @@ import axios from "axios";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { generarPdf } from "../utils/crearPdf";
+import ErrorDialog from "../components/ErrorDialog.vue";
 
 // Carga las fuentes necesarias para pdfmake
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export default {
+  components: {
+    ErrorDialog,
+  },
   data() {
     return {
       id: "",
@@ -509,6 +493,10 @@ export default {
       );
       return fechaFormateada;
     },
+    cerrarDialogo() {
+      // Manejar el evento para cerrar el diálogo en el componente padre
+      this.mostrarError = false;
+    },
     async obtenerDoc(id) {
       try {
         let res = await axios.get(`http://localhost:3000/api/obtener/${id}`);
@@ -561,7 +549,7 @@ export default {
 
 .subtitulos {
   margin-bottom: -10px;
-  text-align: center;
+  text-align: center; 
 }
 
 .centrar-alerta {

@@ -444,7 +444,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
   .dp__theme_light  {
     --dp-background-color: #f5f5f5;
     --dp-text-color: #000000;
