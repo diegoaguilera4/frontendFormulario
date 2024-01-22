@@ -389,6 +389,16 @@ export default {
 
         this.orden = await this.obtenerOrden();
 
+        if (
+          this.selectedDefectoLamina === "Ningún defecto" &&
+          this.selectedDefectoCaja === "Ningún defecto"
+        ) {
+          this.mostrarError = true;
+          this.mensajeError =
+            "Seleccione al menos un defecto en lámina o en caja.";
+          return;
+        }
+
         // Verificar si se ha obtenido la orden correctamente
         if (
           !this.orden ||
