@@ -13,7 +13,7 @@
           >
             Control de desperdicio
           </v-card-title>
-          <v-row style="margin-top: 20px; margin-bottom: 20px;">
+          <v-row style="margin-top: 20px; ">
             <v-col>
               <v-card-text class="subtitulos">
                 N° revisión: {{ documento.nroRevision }}</v-card-text
@@ -31,7 +31,7 @@
                 Fecha: {{ documento.fecha }}</v-card-text
               >
             </v-col>
-            <v-col>
+            <v-col align-self="center">
               <v-card-text class="subtitulos">
                 N° Op: {{ documento.nroOp }}</v-card-text
               >
@@ -48,6 +48,16 @@
                 Kilos: {{ documento.totalKilos }}</v-card-text
               >
             </v-col>
+          </v-row>
+          <v-row justify="center" style="margin-bottom:10px">
+            <v-btn
+                color="red darken-1"
+                variant="tonal"
+                @click="crearPdf(this.documento)"
+              >
+                <v-icon left> mdi-file-pdf </v-icon>
+                Ver PDF
+              </v-btn>
           </v-row>
 
           <v-row justify="center">
@@ -94,6 +104,8 @@
 
 <script>
 import axios from "axios";
+import { generarPdf } from "../utils/crearPdf";
+import pdfMake from "pdfmake/build/pdfmake";
 
 export default {
   data() {
@@ -121,6 +133,12 @@ export default {
           error.message
         );
       }
+    },
+    crearPdf(data) {
+      // Generar el PDF
+      const pdf = generarPdf(data);
+      // Abre el PDF en una nueva ventana
+      pdfMake.createPdf(pdf).open();
     },
     formatearFecha(fecha) {
       const options = { day: "2-digit", month: "2-digit", year: "numeric" };
