@@ -53,7 +53,7 @@
             <v-btn
                 color="black"
                 variant="tonal"
-                @click="crearPdf(verItem)"
+                @click="crearPdf(documento)"
               >
                 <v-icon left color="red"> mdi-file-pdf </v-icon>
                 Ver PDF
