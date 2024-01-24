@@ -1,41 +1,26 @@
 <template>
-  <div class="home">
-    <v-app>
-      <v-navigation-drawer v-model="drawer" absolute temporary>
-        <v-list>
-          <v-list-item @click="$router.push('/')">
-            <v-list-item-title>Documentos</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="$router.push('/escanear')">
-            <v-list-item-title>Escanear</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-navigation-drawer>
+  <v-app>
+    <AppDrawer />
 
-      <v-app-bar>
-        <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-        </v-app-bar>
-
-      <v-main>
-        <TablaForm/>
-      </v-main>
-    </v-app>
-  </div>
+    <v-main>
+      <TablaForm />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
 import TablaForm from "../components/TablaForm.vue";
+import AppDrawer from "../components/AppDrawer.vue";
 
 export default {
   name: "HomeForm",
   components: {
     TablaForm,
+    AppDrawer,
   },
   data() {
-    return {
-      drawer: false,
-    };
-  }
+    return {};
+  },
 };
 </script>
 
