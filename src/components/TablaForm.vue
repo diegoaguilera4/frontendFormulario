@@ -160,27 +160,6 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="400px">
-          <v-card class="text-center" style="border-radius: 20px; padding: 10px">
-            <v-card-text>
-              ¿Estás seguro que deseas eliminar este documento?
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="red-darken-1"
-                variant="tonal"
-                @click="deleteItemConfirm"
-                append-icon="mdi-delete"
-                >Eliminar</v-btn
-              >
-              <v-btn color="blue-darken-1" variant="tonal" @click="closeDelete" append-icon="mdi-close-circle-outline"
-                >Cancelar</v-btn
-              >
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
       </v-toolbar>
     </template>
     <template v-slot:[`item.actions`]="{ item }">
@@ -190,7 +169,6 @@
       <v-icon size="small" class="me-2" @click="editarItem(item)">
         mdi-pencil
       </v-icon>
-      <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
     <template v-slot:no-data>
       <p>No existen resultados</p>
@@ -211,7 +189,6 @@ export default {
   data: () => ({
     search: "",
     dialog: false,
-    dialogDelete: false,
     headers: [
       { key: "_id", title: "Código documento" },
       { key: "nroRevision", title: "Revisión N°" },
@@ -223,7 +200,7 @@ export default {
       },
       { key: "turno", title: "Turno" },
       { key: "responsable", title: "Responsable" },
-      { title: "Actions", key: "actions", sortable: false },
+      { title: "Acciones", key: "actions", sortable: false },
     ],
     controles: [],
     documentos: [],
@@ -303,9 +280,6 @@ export default {
     dialog(val) {
       val || this.close();
     },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
   },
 
   created() {
@@ -370,18 +344,6 @@ export default {
         // Puedes mostrar un mensaje al usuario, registrar el error o realizar otras acciones según tus necesidades.
       }
     },
-    async eliminarControl(id) {
-      try {
-        await axios.delete(`http://localhost:3000/api/eliminar/${id}`);
-        this.obtenerControles();
-      } catch (error) {
-        console.error(
-          `Error al eliminar el control con ID ${id}:`,
-          error.message
-        );
-        // Puedes mostrar un mensaje al usuario, registrar el error o realizar otras acciones según tus necesidades.
-      }
-    },
     initialize() {
       this.controles = [];
       this.obtenerControles();
@@ -403,28 +365,8 @@ export default {
       this.$router.push({ name: "EditarDoc", params: { id: item._id } });
     },
 
-    deleteItem(item) {
-      this.verIndex = this.controles.indexOf(item);
-      this.verItem = Object.assign({}, item);
-      this.dialogDelete = true;
-    },
-
-    deleteItemConfirm() {
-      this.eliminarControl(this.verItem._id);
-      this.controles.splice(this.verIndex, 1);
-      this.closeDelete();
-    },
-
     close() {
       this.dialog = false;
-      this.$nextTick(() => {
-        this.verItem = Object.assign({}, this.defaultItem);
-        this.verIndex = -1;
-      });
-    },
-
-    closeDelete() {
-      this.dialogDelete = false;
       this.$nextTick(() => {
         this.verItem = Object.assign({}, this.defaultItem);
         this.verIndex = -1;
