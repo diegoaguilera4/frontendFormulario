@@ -133,28 +133,6 @@
               max-rows="4"
             ></v-textarea>
           </v-row>
-          <v-row>
-            <v-checkbox
-              v-model="checkbox"
-              style="margin-top: -15px; margin-bottom: -15px"
-            >
-              <template v-slot:label>
-                <span>Marcar peso</span>
-                <v-icon>mdi-weight-kilogram</v-icon>
-              </template>
-            </v-checkbox>
-          </v-row>
-          <v-row justify="start">
-            <v-textarea
-              v-if="checkbox"
-              v-model="totalKilos"
-              label="Total kilos"
-              variant="outlined"
-              dense
-              rows="1"
-              max-rows="4"
-            ></v-textarea>
-          </v-row>
           <v-row style="margin-top: -15px">
             <v-col
               ><v-btn
@@ -490,21 +468,6 @@ export default {
           return;
         }
 
-        var kilosTrue = false;
-
-        if (this.checkbox === true) {
-          if (this.totalKilos === "") {
-            this.mostrarError = true;
-            this.mensajeError = "Ingrese un total de kilos.";
-            return;
-          } else if (isNaN(this.totalKilos)) {
-            this.mostrarError = true;
-            this.mensajeError = "Ingrese un total de kilos válido.";
-            return;
-          } else {
-            kilosTrue = true;
-          }
-        }
         console.log(this.selectedCausaCaja);
 
         let nuevoControl = {
@@ -533,9 +496,6 @@ export default {
           estNumber: this.orden.EstNumber,
         };
 
-        if (kilosTrue) {
-          nuevoControl.totalKilos = this.totalKilos;
-        }
 
         Object.keys(nuevoControl).forEach((key) => {
           if (nuevoControl[key] === undefined) {

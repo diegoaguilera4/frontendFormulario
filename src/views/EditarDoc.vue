@@ -122,17 +122,6 @@
               variant="outlined"
             ></v-combobox>
           </v-row>
-          <v-row justify="start">
-            <v-textarea
-              v-if="totalKilos"
-              v-model="totalKilos"
-              label="Total kilos"
-              variant="outlined"
-              dense
-              rows="1"
-              max-rows="4"
-            ></v-textarea>
-          </v-row>
           <v-row>
             <v-col
               ><v-btn
@@ -423,13 +412,7 @@ export default {
           return;
         }
 
-        if (this.totalKilos) {
-          if (this.totalKilos === "" || isNaN(this.totalKilos)) {
-            this.mostrarError = true;
-            this.mensajeError = "Ingrese un total de kilos válido.";
-            return;
-          }
-        }
+        
 
         let nuevoControl = {
           nroRevision: this.nroRevisionActual + 1,
