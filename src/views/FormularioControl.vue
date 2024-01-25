@@ -505,6 +505,7 @@ export default {
             kilosTrue = true;
           }
         }
+        console.log(this.selectedCausaCaja);
 
         let nuevoControl = {
           nroRevision: 1,
