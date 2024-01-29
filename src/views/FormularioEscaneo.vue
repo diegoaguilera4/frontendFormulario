@@ -62,16 +62,7 @@
 
           <v-row justify="center">
             <v-textarea
-              label="Nuevo formulario 1"
-              variant="outlined"
-              dense
-              rows="1"
-              max-rows="4"
-            ></v-textarea>
-          </v-row>
-          <v-row justify="center">
-            <v-textarea
-              label="Nuevo formulario 2"
+              label="Total kilos"
               variant="outlined"
               dense
               rows="1"
@@ -124,9 +115,12 @@ export default {
   methods: {
     async obtenerDoc(id) {
       try {
-        let res = await axios.get(`http://localhost:3000/api/obtener/${id}`);
+        let res = await axios.get(
+          `http://localhost:3000/api/obtener/${id}/`
+        );
         this.documento = res.data;
         this.documento = this.documento.versiones[this.documento.versiones.length - 1] ;
+        this.documento.idAux = res.data.idAux;
         this.documento.fecha = this.formatearFecha(this.documento.fecha);
       } catch (error) {
         console.error(
