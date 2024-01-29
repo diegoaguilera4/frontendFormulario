@@ -151,7 +151,7 @@
                 class="mt-2"
                 color="red-darken-1"
                 @click="retroceder"
-                append-icon="mdi-arrow-left-bold-circle-outline"
+                append-icon="mdi-close-circle-outline"
                 >Cancelar</v-btn
               ></v-col
             >
