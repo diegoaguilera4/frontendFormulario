@@ -56,7 +56,7 @@
       />
     </v-col>
   </v-row>
-  <v-row style="margin-left: 30px">
+  <v-row style="margin-left: 1%">
     <v-switch
       v-model="switchTabla"
       :label="
