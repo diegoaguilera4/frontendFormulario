@@ -468,8 +468,6 @@ export default {
           return;
         }
 
-        console.log(this.selectedCausaCaja);
-
         let nuevoControl = {
           nroRevision: 1,
           area: this.selectedArea,
@@ -496,23 +494,27 @@ export default {
           estNumber: this.orden.EstNumber,
         };
 
-
         Object.keys(nuevoControl).forEach((key) => {
           if (nuevoControl[key] === undefined) {
             delete nuevoControl[key];
           }
         });
 
+        const nuevoControlConVersiones = {
+          versiones: [nuevoControl],
+        };
+
         let res = await axios.post(
           "http://localhost:3000/api/agregar",
-          nuevoControl
+          nuevoControlConVersiones
         );
 
         if (res.status === 201) {
           //formatear res.data.fecha
-          res.data.fecha = this.formatFecha(res.data.fecha);
+          res.data.versiones[0].fecha = this.formatFecha(res.data.versiones[0].fecha);
+          res.data.versiones[0].idAux = res.data.idAux;
           //generar el pdf
-          const pdfDefinition = generarPdf(res.data);
+          const pdfDefinition = generarPdf(res.data.versiones[0]);
 
           // Abre el PDF en una nueva ventana o descárgalo
           pdfMake.createPdf(pdfDefinition).open();

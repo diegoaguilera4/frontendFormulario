@@ -214,7 +214,6 @@ export default {
       selectedDefectoCaja: "",
       selectedDefectoCajaOtros: "",
       selectedCausaCaja: "",
-      totalKilos: "",
       areas: [
         "corrugadora",
         "ward1",
@@ -305,6 +304,11 @@ export default {
       mostrarConfirmacion: false,
       mostrarError: false,
       mensajeError: "",
+      cliente: "",
+      producto: "",
+      cantidad: "",
+      nroOp: "",
+      estNumber:"",
     };
   },
   watch: {
@@ -323,8 +327,9 @@ export default {
   },
   mounted() {
     this.id = this.$route.params.id;
+    this.nroRevision = this.$route.params.nroRevision;
     // Realiza acciones con el ID, por ejemplo, llama a obtenerDoc con el ID
-    this.obtenerDoc(this.id);
+    this.obtenerDoc(this.id, this.nroRevision);
   },
   methods: {
     validarSeleccion(lista, valor) {
@@ -438,18 +443,27 @@ export default {
             this.selectedDefectoCaja !== "Ningún defecto"
               ? this.selectedCausaCaja
               : undefined,
-          totalKilos: this.totalKilos ? this.totalKilos : undefined,
+          cliente: this.cliente,
+          producto: this.producto,
+          cantidad: this.cantidad,
+          nroOp: this.nroOp,
+          estNumber: this.estNumber,
+          fecha: new Date(),
         };
 
         let res = await axios.put(
           `http://localhost:3000/api/actualizar/${this.id}`,
           nuevoControl
         );
+        // 
+
+        var doc = res.data.versiones[res.data.versiones.length - 1];
+          doc.fecha = this.formatearFecha(doc.fecha);
+          doc.idAux = res.data.idAux;
+
 
         if (res.status === 200) {
-          // Generar el PDF
-          const pdfDefinition = generarPdf(res.data);
-
+          const pdfDefinition = generarPdf(doc);
           // Abre el PDF en una nueva ventana o descárgalo
           pdfMake.createPdf(pdfDefinition).open();
           // Opción para descargar el PDF directamente:
@@ -458,11 +472,11 @@ export default {
           this.mensajeError = "Documento creado con éxito.";
           this.mostrarError = true;
         } else {
-          this.mensajeError = "Error al enviar el documento 1.";
+          this.mensajeError = "Error al generar documento pdf.";
           this.mostrarError = true;
         }
       } catch (error) {
-        this.mensajeError = "Error al enviar el documento 2.";
+        this.mensajeError = "Error al enviar el documento 2. ";
         this.mostrarError = true;
       } finally {
         this.mostrarConfirmacion = false; // Cerrar la alerta después de enviar
@@ -480,9 +494,9 @@ export default {
       // Manejar el evento para cerrar el diálogo en el componente padre
       this.mostrarError = false;
     },
-    async obtenerDoc(id) {
+    async obtenerDoc(id,nroRevision) {
       try {
-        let res = await axios.get(`http://localhost:3000/api/obtener/${id}`);
+        let res = await axios.get(`http://localhost:3000/api/obtenerVersion/${id}/${nroRevision}`);
         this.fechaDoc = this.formatearFecha(res.data.fecha);
         this.selectedArea = res.data.area;
         this.nroRevisionActual = res.data.nroRevision;
@@ -501,7 +515,12 @@ export default {
           this.selectedDefectoCajaOtros = res.data.defectoEnCajaOtros;
         }
         this.selectedCausaCaja = res.data.causaCaja;
-        this.totalKilos = res.data.totalKilos;
+        this.cliente = res.data.cliente;
+        this.producto = res.data.producto;
+        this.cantidad = res.data.cantidad;
+        this.nroOp = res.data.nroOp;
+        this.estNumber = res.data.estNumber;
+        
       } catch (error) {
         console.error(
           `Error al obtener el control con ID ${id}:`,

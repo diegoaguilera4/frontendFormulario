@@ -1,6 +1,8 @@
 import JsBarcode from "jsbarcode";
 
 export function generarPdf(data) {
+  console.log("Xd:");
+  console.log(data);
   const pdfDefinition = {
     content: [
       {
@@ -28,7 +30,7 @@ export function generarPdf(data) {
         table: {
           widths: ["*", "*"],
           body: [
-            [{ text: "Id control", style: "tableHeader" }, data._id],
+            [{ text: "Código documento", style: "tableHeader" }, data.idAux],
             [
               { text: "Área", style: "tableHeader" },
               data.area === "Otra"
@@ -119,18 +121,8 @@ export function generarPdf(data) {
     },
   });
 
-  if (data.totalKilos) {
-    pdfDefinition.content.push({
-      style: "tableExample",
-      table: {
-        widths: ["*", "*"],
-        body: [["Total kilos", data.totalKilos]],
-      },
-    });
-  }
-
   const canvas = document.createElement("canvas");
-  JsBarcode(canvas, data._id, { format: "CODE128" });
+  JsBarcode(canvas, data.idAux, { format: "CODE128" });
   // Redimensionar el canvas
 
   // Convertir el canvas a imagen y agregarla al documento PDF
@@ -138,7 +130,6 @@ export function generarPdf(data) {
   pdfDefinition.content.push({
     image: imageData,
     alignment: "center",
-    width: 300,
   });
 
   return pdfDefinition;

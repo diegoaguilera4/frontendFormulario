@@ -1,13 +1,13 @@
 <template>
-  <v-row style="margin-top: 20px; margin-left: 5px; margin-right: 5px;">
-    <v-col >
+  <v-row style="margin-top: 20px; margin-left: 5px; margin-right: 5px">
+    <v-col>
       <v-text-field
         v-model="search"
         label="Buscar"
         solo-inverted
         clearable
         @click:clear="clearSearch"
-        append-inner-icon="mdi-magnify" 
+        append-inner-icon="mdi-magnify"
       ></v-text-field>
     </v-col>
     <v-col>
@@ -42,8 +42,8 @@
       ></v-select>
     </v-col>
 
-    <v-col style="padding-top: 22px;">
-      <VueDatePicker  
+    <v-col>
+      <VueDatePicker
         v-model="filtroFecha"
         locale="es"
         format="dd/MM/yyyy"
@@ -52,9 +52,8 @@
         :enable-time-picker="false"
         range
         placeholder="Filtrar por rango de fechas"
-        :partial-range="true" 
+        :partial-range="true"
       />
-      
     </v-col>
   </v-row>
   <v-data-table
@@ -77,9 +76,7 @@
         </v-btn>
         <v-dialog v-model="dialog" max-width="500px">
           <v-card style="border-radius: 20px; padding: 10px">
-            <v-card-title class="text-center">
-              Documento
-            </v-card-title>
+            <v-card-title class="text-center"> Documento </v-card-title>
 
             <v-card-text>
               <v-container>
@@ -146,15 +143,16 @@
             </v-card-text>
 
             <v-card-actions class="justify-center">
-              <v-btn
-                color="black"
-                variant="tonal"
-                @click="crearPdf(verItem)"
-              >
+              <v-btn color="black" variant="tonal" @click="crearPdf(verItem)">
                 <v-icon left color="red"> mdi-file-pdf </v-icon>
                 Generar PDF
               </v-btn>
-              <v-btn color="red-darken-1" variant="tonal" @click="close" append-icon="mdi-close-circle-outline" >
+              <v-btn
+                color="red-darken-1"
+                variant="tonal"
+                @click="close"
+                append-icon="mdi-close-circle-outline"
+              >
                 Cerrar
               </v-btn>
             </v-card-actions>
@@ -190,7 +188,9 @@ export default {
     search: "",
     dialog: false,
     headers: [
-      { key: "_id", title: "Código documento" },
+      { key: "idAux", title: "Código documento" },
+      { key: "idPadre", title: "id" },
+
       { key: "nroRevision", title: "Revisión N°" },
       { key: "area", title: "Área" },
       {
@@ -203,7 +203,6 @@ export default {
       { title: "Acciones", key: "actions", sortable: false },
     ],
     controles: [],
-    documentos: [],
     verIndex: -1,
     verItem: {
       _id: "",
@@ -227,6 +226,7 @@ export default {
     selectedDate: null,
     showDatePicker: false,
     filtroFecha: new ref(),
+    nuevosControles: [],
   }),
 
   computed: {
@@ -330,11 +330,16 @@ export default {
         // Verificar si la respuesta tiene datos
         if (response.data) {
           this.controles = response.data;
-
-          // Formatear las fechas
+          this.nuevosControles = [];
           this.controles.forEach((control) => {
-            control.fecha = this.formatFecha(control.fecha);
+            control.versiones.forEach((version) => {
+              version.fecha = this.formatFecha(version.fecha);
+              version.idAux = control.idAux;
+              version.idPadre = control._id;
+              this.nuevosControles.push(version);
+            });
           });
+          this.controles = this.nuevosControles;
         } else {
           console.error("La respuesta no contiene datos válidos.");
           // Puedes lanzar una excepción personalizada o manejarla según tus necesidades.
@@ -362,7 +367,10 @@ export default {
     },
     editarItem(item) {
       //Enviar a EditarDoc con el id del item
-      this.$router.push({ name: "EditarDoc", params: { id: item._id } });
+      this.$router.push({
+        name: "EditarDoc",
+        params: { id: item.idPadre, nroRevision: item.nroRevision },
+      });
     },
 
     close() {
@@ -385,76 +393,75 @@ export default {
 };
 </script>
 
-<style >
-  .dp__theme_light  {
-    --dp-background-color: #f5f5f5;
-    --dp-text-color: #000000;
-    --dp-hover-color: #d7e1ea;
-    --dp-hover-text-color: #212121;
-    --dp-hover-icon-color: #959595;
-    --dp-primary-color: #3f8ad5;
-    --dp-primary-disabled-color: #6bacea;
-    --dp-primary-text-color: #ffffff;
-    --dp-secondary-color:   #919090;
-    --dp-border-color: #efefef;
-    --dp-menu-border-color: #ddd;
-    --dp-border-color-hover: #aaaeb7;
-    --dp-disabled-color: #f6f6f6;
-    --dp-scroll-bar-background: #f3f3f3;
-    --dp-scroll-bar-color: #959595;
-    --dp-success-color: #76d275;
-    --dp-success-color-disabled: #a3d9b1;
-    --dp-icon-color: #636363;
-    --dp-danger-color: #ff6f60;
-    --dp-marker-color: #ff6f60;
-    --dp-tooltip-color: #fafafa;
-    --dp-disabled-color-text: #8e8e8e;
-    --dp-highlight-color: rgb(25 118 210 / 10%);
-    --dp-range-between-dates-background-color: var(--dp-hover-color, #f3f3f3);
-    --dp-range-between-dates-text-color: var(--dp-hover-text-color, #212121);
-    --dp-range-between-border-color: var(--dp-hover-color, #f3f3f3);
-  }
+<style>
+.dp__theme_light {
+  --dp-background-color: #f5f5f5;
+  --dp-text-color: #000000;
+  --dp-hover-color: #d7e1ea;
+  --dp-hover-text-color: #212121;
+  --dp-hover-icon-color: #959595;
+  --dp-primary-color: #3f8ad5;
+  --dp-primary-disabled-color: #6bacea;
+  --dp-primary-text-color: #ffffff;
+  --dp-secondary-color: #919090;
+  --dp-border-color: #efefef;
+  --dp-menu-border-color: #ddd;
+  --dp-border-color-hover: #aaaeb7;
+  --dp-disabled-color: #f6f6f6;
+  --dp-scroll-bar-background: #f3f3f3;
+  --dp-scroll-bar-color: #959595;
+  --dp-success-color: #76d275;
+  --dp-success-color-disabled: #a3d9b1;
+  --dp-icon-color: #636363;
+  --dp-danger-color: #ff6f60;
+  --dp-marker-color: #ff6f60;
+  --dp-tooltip-color: #fafafa;
+  --dp-disabled-color-text: #8e8e8e;
+  --dp-highlight-color: rgb(25 118 210 / 10%);
+  --dp-range-between-dates-background-color: var(--dp-hover-color, #f3f3f3);
+  --dp-range-between-dates-text-color: var(--dp-hover-text-color, #212121);
+  --dp-range-between-border-color: var(--dp-hover-color, #f3f3f3);
+}
 
-  :root {
-    /* General */
-    --dp-font-family: roboto;
-    --dp-border-radius: 0px; /* Radio de borde configurable */
-    --dp-cell-border-radius: 10px; /* Radio de borde específico para la celda del calendario */
-    --dp-common-transition: all 0.1s ease-in; /* Transición genérica aplicada a botones y celdas del calendario */
+:root {
+  /* General */
+  --dp-font-family: roboto;
+  --dp-border-radius: 0px; /* Radio de borde configurable */
+  --dp-cell-border-radius: 10px; /* Radio de borde específico para la celda del calendario */
+  --dp-common-transition: all 0.1s ease-in; /* Transición genérica aplicada a botones y celdas del calendario */
 
-    /* Tamaños */
-    --dp-button-height: 35px; /* Tamaño para botones en superposiciones */
-    --dp-month-year-row-height: 35px; /* Altura de la fila de selección de mes-año */
-    --dp-month-year-row-button-size: 35px; /* Altura específica para los botones siguiente/anterior */
-    --dp-button-icon-height: 20px; /* Tamaño de icono en botones */
-    --dp-cell-size: 40px; /* Ancho y alto de la celda del calendario */
-    --dp-cell-padding: 5px; /* Relleno en la celda */
-    --dp-common-padding: 10px; /* Relleno común utilizado */
-    --dp-input-icon-padding: 35px; /* Relleno en el lado izquierdo del campo de entrada si hay un icono presente */
-    --dp-input-padding: 6px 30px 6px 12px; /* Relleno en el campo de entrada */
-    --dp-menu-min-width: 345px; /* Ajustar el ancho mínimo del menú */
-    --dp-action-buttons-padding: 2px 5px; /* Ajustar el relleno para los botones de acción en la fila de acciones */
-    --dp-row-margin: 5px 0; /* Ajustar el espacio entre filas en el calendario */
-    --dp-calendar-header-cell-padding: 0.5rem; /* Ajustar el relleno en las celdas de encabezado del calendario */
-    --dp-two-calendars-spacing: 10px; /* Espacio entre varios calendarios */
-    --dp-overlay-col-padding: 3px; /* Relleno en la columna de superposición */
-    --dp-time-inc-dec-button-size: 32px; /* Tamaño para botones de incremento/decremento en el selector de tiempo */
-    --dp-menu-padding: 6px 8px; /* Relleno del menú */
+  /* Tamaños */
+  --dp-button-height: 35px; /* Tamaño para botones en superposiciones */
+  --dp-month-year-row-height: 35px; /* Altura de la fila de selección de mes-año */
+  --dp-month-year-row-button-size: 35px; /* Altura específica para los botones siguiente/anterior */
+  --dp-button-icon-height: 20px; /* Tamaño de icono en botones */
+  --dp-cell-size: 40px; /* Ancho y alto de la celda del calendario */
+  --dp-cell-padding: 5px; /* Relleno en la celda */
+  --dp-common-padding: 10px; /* Relleno común utilizado */
+  --dp-input-icon-padding: 35px; /* Relleno en el lado izquierdo del campo de entrada si hay un icono presente */
+  --dp-input-padding: 6px 30px 6px 12px; /* Relleno en el campo de entrada */
+  --dp-menu-min-width: 345px; /* Ajustar el ancho mínimo del menú */
+  --dp-action-buttons-padding: 2px 5px; /* Ajustar el relleno para los botones de acción en la fila de acciones */
+  --dp-row-margin: 5px 0; /* Ajustar el espacio entre filas en el calendario */
+  --dp-calendar-header-cell-padding: 0.5rem; /* Ajustar el relleno en las celdas de encabezado del calendario */
+  --dp-two-calendars-spacing: 10px; /* Espacio entre varios calendarios */
+  --dp-overlay-col-padding: 3px; /* Relleno en la columna de superposición */
+  --dp-time-inc-dec-button-size: 32px; /* Tamaño para botones de incremento/decremento en el selector de tiempo */
+  --dp-menu-padding: 6px 8px; /* Relleno del menú */
 
-    /* Tamaños de fuente */
-    --dp-font-size: 1.0rem; /* Tamaño de fuente predeterminado */
-    --dp-preview-font-size: 0.8rem; /* Tamaño de fuente de la vista previa de la fecha en la fila de acciones */
-    --dp-time-font-size: 0.8rem; /* Tamaño de fuente en el selector de tiempo */
+  /* Tamaños de fuente */
+  --dp-font-size: 1rem; /* Tamaño de fuente predeterminado */
+  --dp-preview-font-size: 0.8rem; /* Tamaño de fuente de la vista previa de la fecha en la fila de acciones */
+  --dp-time-font-size: 0.8rem; /* Tamaño de fuente en el selector de tiempo */
 
-    /* Transiciones */
-    --dp-animation-duration: 0.1s; /* Duración de la transición */
-    --dp-menu-appear-transition-timing: cubic-bezier(
-      0.4,
-      0,
-      1,
-      1
-    ); /* Temporización en la animación de aparición del menú */
-    --dp-transition-timing: ease-out; /* Temporización en las animaciones de deslizamiento */
-  }
-  
+  /* Transiciones */
+  --dp-animation-duration: 0.1s; /* Duración de la transición */
+  --dp-menu-appear-transition-timing: cubic-bezier(
+    0.4,
+    0,
+    1,
+    1
+  ); /* Temporización en la animación de aparición del menú */
+  --dp-transition-timing: ease-out; /* Temporización en las animaciones de deslizamiento */
+}
 </style>

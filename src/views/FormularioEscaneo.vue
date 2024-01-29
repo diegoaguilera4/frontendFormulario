@@ -126,6 +126,7 @@ export default {
       try {
         let res = await axios.get(`http://localhost:3000/api/obtener/${id}`);
         this.documento = res.data;
+        this.documento = this.documento.versiones[this.documento.versiones.length - 1] ;
         this.documento.fecha = this.formatearFecha(this.documento.fecha);
       } catch (error) {
         console.error(
