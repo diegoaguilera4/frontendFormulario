@@ -122,6 +122,16 @@
               variant="outlined"
             ></v-combobox>
           </v-row>
+          <v-row justify="start">
+            <v-textarea
+              v-model="nroOp"
+              label="Número orden"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
           <v-row>
             <v-col
               ><v-btn
@@ -214,6 +224,7 @@ export default {
       selectedDefectoCaja: "",
       selectedDefectoCajaOtros: "",
       selectedCausaCaja: "",
+      orden: {},
       areas: [
         "corrugadora",
         "ward1",
@@ -337,8 +348,40 @@ export default {
       // Validar que el valor esté presente en la lista
       return lista.includes(valor);
     },
+    async obtenerOrden() {
+      return axios
+        .get(`http://localhost:3000/sql/obtener/${this.nroOp}`)
+        .then((response) => response.data)
+        .catch((error) => {
+          console.error(
+            `Error al obtener la orden con ID ${this.nroOp}:`,
+            error.message
+          );
+          throw error; // Propaga el error
+        });
+    },
     async enviarControl() {
       try {
+        if (this.nroOp.trim() === "") {
+          this.mostrarError = true;
+          this.mensajeError = "Ingrese un número de orden válido.";
+          return;
+        }
+
+        this.orden = await this.obtenerOrden();
+        console.log(this.orden);
+
+        if (
+          !this.orden ||
+          Object.keys(this.orden).length === 0 ||
+          !this.orden.CustomerName
+        ) {
+          this.mostrarError = true;
+          this.mensajeError =
+            "Error al obtener la orden. Verifique el número de orden ingresado.";
+          return;
+        }
+
         if (!this.validarSeleccion(this.areas, this.selectedArea)) {
           this.mostrarError = true;
           this.mensajeError = "Área seleccionada no válida.";
@@ -442,11 +485,11 @@ export default {
             this.selectedDefectoCaja !== "Ningún defecto"
               ? this.selectedCausaCaja
               : undefined,
-          cliente: this.cliente,
-          producto: this.producto,
-          cantidad: this.cantidad,
-          nroOp: this.nroOp,
-          estNumber: this.estNumber,
+          cliente: this.orden.CustomerName,
+          producto: this.orden.ProductDescription,
+          cantidad: this.orden.QuantityOrdered,
+          nroOp: this.numeroOrden,
+          estNumber: this.orden.EstNumber,
           fecha: new Date(),
         };
 

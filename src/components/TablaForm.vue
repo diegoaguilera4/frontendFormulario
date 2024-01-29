@@ -79,6 +79,15 @@
         <v-toolbar-title>Documentos</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
+          color="green darken-3"
+          variant="elevated"
+          append-icon="mdi-file-excel-outline"
+          style="margin-right: 10px"
+          @click="exportarExcel()"
+        >
+          Exportar
+        </v-btn>
+        <v-btn
           variant="tonal"
           append-icon="mdi-plus-circle"
           @click="irNuevoDoc()"
@@ -175,7 +184,7 @@
       <v-icon size="small" class="me-2" @click="mostrarItem(item)">
         mdi-eye
       </v-icon>
-      <v-icon size="small" class="me-2" @click="editarItem(item)">
+      <v-icon v-if="switchTabla" size="small" class="me-2" @click="editarItem(item)">
         mdi-pencil
       </v-icon>
     </template>
@@ -183,6 +192,21 @@
       <p>No existen resultados</p>
     </template>
   </v-data-table>
+  <v-dialog v-model="noHayDatos" max-width="500px">
+    <v-card style="border-radius: 20px; padding: 10px">
+      <v-card-title class="text-center"> Error exportando</v-card-title>
+      <v-card-text>
+        <p>
+          No se puede exportar a Excel porque no hay datos que cumplan con los
+          filtros seleccionados.
+        </p>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn variant="tonal" @click="noHayDatos = false"> Cerrar </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -191,6 +215,7 @@ import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { generarPdf } from "../utils/crearPdf";
 import { ref } from "vue";
+import * as XLSX from "xlsx";
 
 // Carga las fuentes necesarias para pdfmake
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -198,6 +223,7 @@ export default {
   data: () => ({
     search: "",
     dialog: false,
+    noHayDatos: false,
     headers: [
       { key: "idAux", title: "Código documento" },
       { key: "idPadre", title: "id" },
@@ -214,6 +240,8 @@ export default {
       { title: "Acciones", key: "actions", sortable: false },
     ],
     controles: [],
+    controlesTodos: [],
+    controlesUltimos: [],
     verIndex: -1,
     verItem: {
       _id: "",
@@ -238,16 +266,12 @@ export default {
     showDatePicker: false,
     filtroFecha: new ref(),
     nuevosControles: [],
-    switchTabla: false,
+    switchTabla: true,
   }),
 
   computed: {
     filteredControles() {
-      if (this.switchTabla) {
-        this.obtenerUltimos();
-      } else {
-        this.obtenerControles();
-      }
+      this.actualizarControles();
       const filtroFechaProxy = this.filtroFecha;
       // Verificar si filtroFechaProxy está definido
       if (filtroFechaProxy) {
@@ -301,10 +325,18 @@ export default {
 
   created() {
     this.initialize();
+    this.obtenerUltimos();
     this.obtenerControles();
   },
 
   methods: {
+    actualizarControles() {
+      if (this.switchTabla) {
+        this.controles = this.controlesUltimos;
+      } else {
+        this.controles = this.controlesTodos;
+      }
+    },
     async obtenerUltimos() {
       try {
         const response = await axios.get(
@@ -313,9 +345,9 @@ export default {
 
         // Verificar si la respuesta tiene datos
         if (response.data) {
-          this.controles = response.data;
+          this.controlesUltimos = response.data;
           this.nuevosControles = [];
-          this.controles.forEach((control) => {
+          this.controlesUltimos.forEach((control) => {
             var controlAgregar =
               control.versiones[control.versiones.length - 1];
             controlAgregar.idAux = control.idAux;
@@ -323,7 +355,7 @@ export default {
             controlAgregar.fecha = this.formatFecha(controlAgregar.fecha);
             this.nuevosControles.push(controlAgregar);
           });
-          this.controles = this.nuevosControles;
+          this.controlesUltimos = this.nuevosControles;
         } else {
           console.error("La respuesta no contiene datos válidos.");
           // Puedes lanzar una excepción personalizada o manejarla según tus necesidades.
@@ -374,9 +406,9 @@ export default {
 
         // Verificar si la respuesta tiene datos
         if (response.data) {
-          this.controles = response.data;
+          this.controlesTodos = response.data;
           this.nuevosControles = [];
-          this.controles.forEach((control) => {
+          this.controlesTodos.forEach((control) => {
             control.versiones.forEach((version) => {
               version.fecha = this.formatFecha(version.fecha);
               version.idAux = control.idAux;
@@ -384,7 +416,7 @@ export default {
               this.nuevosControles.push(version);
             });
           });
-          this.controles = this.nuevosControles;
+          this.controlesTodos = this.nuevosControles;
         } else {
           console.error("La respuesta no contiene datos válidos.");
           // Puedes lanzar una excepción personalizada o manejarla según tus necesidades.
@@ -396,7 +428,7 @@ export default {
     },
     initialize() {
       this.controles = [];
-      this.obtenerControles();
+      this.obtenerUltimos();
     },
     crearPdf(data) {
       // Generar el PDF
@@ -433,6 +465,17 @@ export default {
         this.controles.push(this.verItem);
       }
       this.close();
+    },
+    exportarExcel() {
+      //verificar que filteredRegistros tenga datos
+      if (this.filteredControles.length > 0) {
+        const worksheet = XLSX.utils.json_to_sheet(this.filteredControles);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Documentos");
+        XLSX.writeFile(workbook, "Documentos.xlsx");
+      } else {
+        this.noHayDatos = true;
+      }
     },
   },
 };
