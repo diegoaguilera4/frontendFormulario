@@ -1,8 +1,6 @@
 import JsBarcode from "jsbarcode";
 
 export function generarPdf(data) {
-  console.log("Xd:");
-  console.log(data);
   const pdfDefinition = {
     content: [
       {

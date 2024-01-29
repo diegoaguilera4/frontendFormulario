@@ -56,6 +56,17 @@
       />
     </v-col>
   </v-row>
+  <v-row style="margin-left: 30px">
+    <v-switch
+      v-model="switchTabla"
+      :label="
+        switchTabla
+          ? 'Mostrando últimas versiones'
+          : 'Mostrando todas las versiones'
+      "
+      color="green-darken-1"
+    ></v-switch>
+  </v-row>
   <v-data-table
     :headers="headers"
     :items="filteredControles"
@@ -227,10 +238,16 @@ export default {
     showDatePicker: false,
     filtroFecha: new ref(),
     nuevosControles: [],
+    switchTabla: false,
   }),
 
   computed: {
     filteredControles() {
+      if (this.switchTabla) {
+        this.obtenerUltimos();
+      } else {
+        this.obtenerControles();
+      }
       const filtroFechaProxy = this.filtroFecha;
       // Verificar si filtroFechaProxy está definido
       if (filtroFechaProxy) {
@@ -288,6 +305,34 @@ export default {
   },
 
   methods: {
+    async obtenerUltimos() {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/obtenerTodos"
+        );
+
+        // Verificar si la respuesta tiene datos
+        if (response.data) {
+          this.controles = response.data;
+          this.nuevosControles = [];
+          this.controles.forEach((control) => {
+            var controlAgregar =
+              control.versiones[control.versiones.length - 1];
+            controlAgregar.idAux = control.idAux;
+            controlAgregar.idPadre = control._id;
+            controlAgregar.fecha = this.formatFecha(controlAgregar.fecha);
+            this.nuevosControles.push(controlAgregar);
+          });
+          this.controles = this.nuevosControles;
+        } else {
+          console.error("La respuesta no contiene datos válidos.");
+          // Puedes lanzar una excepción personalizada o manejarla según tus necesidades.
+        }
+      } catch (error) {
+        console.error("Error al obtener los controles:", error.message);
+        // Puedes mostrar un mensaje al usuario, registrar el error o realizar otras acciones según tus necesidades.
+      }
+    },
     getUniqueValues(columnKey) {
       const uniqueValues = new Set();
       this.filteredControles.forEach((item) => {

@@ -2,7 +2,7 @@
   <v-sheet width="1000" class="mx-auto mt-11">
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
-        <v-card class="card-shadow" style="padding: 50px;">
+        <v-card class="card-shadow" style="padding: 50px">
           <v-card-title
             class="text-h6 text-md-h5 text-lg-h4 text-center"
             style="
@@ -308,7 +308,8 @@ export default {
       producto: "",
       cantidad: "",
       nroOp: "",
-      estNumber:"",
+      estNumber: "",
+      cantidadVersiones: "",
     };
   },
   watch: {
@@ -417,10 +418,8 @@ export default {
           return;
         }
 
-        
-
         let nuevoControl = {
-          nroRevision: this.nroRevisionActual + 1,
+          nroRevision: this.cantidadVersiones + 1,
           area: this.selectedArea,
           areaOtra: this.selectedArea === "Otra" ? this.selectedAreaOtra : "",
           turno: parseInt(this.selectedTurno),
@@ -455,12 +454,11 @@ export default {
           `http://localhost:3000/api/actualizar/${this.id}`,
           nuevoControl
         );
-        // 
+        //
 
         var doc = res.data.versiones[res.data.versiones.length - 1];
-          doc.fecha = this.formatearFecha(doc.fecha);
-          doc.idAux = res.data.idAux;
-
+        doc.fecha = this.formatearFecha(doc.fecha);
+        doc.idAux = res.data.idAux;
 
         if (res.status === 200) {
           const pdfDefinition = generarPdf(doc);
@@ -494,33 +492,36 @@ export default {
       // Manejar el evento para cerrar el diálogo en el componente padre
       this.mostrarError = false;
     },
-    async obtenerDoc(id,nroRevision) {
+    async obtenerDoc(id, nroRevision) {
       try {
-        let res = await axios.get(`http://localhost:3000/api/obtenerVersion/${id}/${nroRevision}`);
-        this.fechaDoc = this.formatearFecha(res.data.fecha);
-        this.selectedArea = res.data.area;
-        this.nroRevisionActual = res.data.nroRevision;
+        let res = await axios.get(
+          `http://localhost:3000/api/obtenerVersion/${id}/${nroRevision}`
+        );
+        this.fechaDoc = this.formatearFecha(res.data.version.fecha);
+        this.selectedArea = res.data.version.area;
+        this.nroRevisionActual = res.data.version.nroRevision;
         if (this.selectedArea === "Otra") {
-          this.selectedAreaOtra = res.data.areaOtra;
+          this.selectedAreaOtra = res.data.version.areaOtra;
         }
-        this.selectedTurno = res.data.turno.toString();
-        this.responsableRechazo = res.data.responsable;
-        this.selectedDefectoLamina = res.data.defectoEnLamina;
+        this.selectedTurno = res.data.version.turno.toString();
+        this.responsableRechazo = res.data.version.responsable;
+        this.selectedDefectoLamina = res.data.version.defectoEnLamina;
         if (this.selectedDefectoLamina === "Otros") {
-          this.selectedDefectoLaminaOtros = res.data.defectoEnLaminaOtros;
+          this.selectedDefectoLaminaOtros =
+            res.data.version.defectoEnLaminaOtros;
         }
-        this.selectedCausaLamina = res.data.causaLamina;
-        this.selectedDefectoCaja = res.data.defectoEnCaja;
+        this.selectedCausaLamina = res.data.version.causaLamina;
+        this.selectedDefectoCaja = res.data.version.defectoEnCaja;
         if (this.selectedDefectoCaja === "Otros") {
-          this.selectedDefectoCajaOtros = res.data.defectoEnCajaOtros;
+          this.selectedDefectoCajaOtros = res.data.version.defectoEnCajaOtros;
         }
-        this.selectedCausaCaja = res.data.causaCaja;
-        this.cliente = res.data.cliente;
-        this.producto = res.data.producto;
-        this.cantidad = res.data.cantidad;
-        this.nroOp = res.data.nroOp;
-        this.estNumber = res.data.estNumber;
-        
+        this.selectedCausaCaja = res.data.version.causaCaja;
+        this.cliente = res.data.version.cliente;
+        this.producto = res.data.version.producto;
+        this.cantidad = res.data.version.cantidad;
+        this.nroOp = res.data.version.nroOp;
+        this.estNumber = res.data.version.estNumber;
+        this.cantidadVersiones = res.data.cantidadVersiones;
       } catch (error) {
         console.error(
           `Error al obtener el control con ID ${id}:`,
@@ -551,7 +552,7 @@ export default {
 
 .subtitulos {
   margin-bottom: -10px;
-  text-align: center; 
+  text-align: center;
 }
 
 .centrar-alerta {

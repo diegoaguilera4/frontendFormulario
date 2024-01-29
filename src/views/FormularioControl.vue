@@ -528,7 +528,6 @@ export default {
           this.mostrarError = true;
         }
       } catch (error) {
-        console.log(error);
         this.mensajeError = "Error al enviar el documento 2.";
         this.mostrarError = true;
       } finally {
