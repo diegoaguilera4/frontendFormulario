@@ -18,33 +18,47 @@
             Hoja de control de pérdida
           </v-card-text>
           <v-card-text class="subtitulos">Fecha: {{ currentDate }}</v-card-text>
-          <v-row justify="start" style="margin-top: 20px">
-            <v-combobox
-              v-model="selectedArea"
-              label="Area"
-              :items="areas"
-              variant="outlined"
-            ></v-combobox>
+          <v-row justify="start">
+            <v-select
+              v-model="selectedTurno"
+              label="Turno"
+              :items="['1', '2', '3']"
+            ></v-select>
           </v-row>
-
-          <v-row justify="start" v-if="selectedArea === 'Otra'">
+          <v-row justify="start">
+            <v-select
+              label="Selecciona tipo"
+              v-model="selectedTipo"
+              :items="['Caja', 'Lamina', 'Otros']"
+            >
+            </v-select>
+          </v-row>
+          <v-row justify="start">
             <v-textarea
-              v-model="selectedAreaOtra"
-              label="Otra"
+              v-model="otrosTipos"
+              label="Ingrese otro tipo"
               variant="outlined"
+              v-if="selectedTipo === 'Otros'"
               dense
               rows="1"
               max-rows="4"
             ></v-textarea>
           </v-row>
-
           <v-row justify="start">
-            <v-combobox
-              v-model="selectedTurno"
-              label="Turno"
-              :items="['1', '2', '3']"
-              variant="outlined"
-            ></v-combobox>
+            <v-select
+              v-model="selectedArea"
+              label="Selecciona area"
+              :items="areas"
+            >
+            </v-select>
+          </v-row>
+          <v-row justify="start">
+            <v-select
+              v-model="selectedDefecto"
+              label="Selecciona defecto"
+              v-if="selectedArea !== ''"
+              :items="defectos[selectedAreaIndex] || []"
+            ></v-select>
           </v-row>
 
           <v-row justify="start">
@@ -56,72 +70,6 @@
               rows="1"
               max-rows="4"
             ></v-textarea>
-          </v-row>
-
-          <v-row justify="start">
-            <v-combobox
-              v-model="selectedDefectoLamina"
-              label="Defecto en lamina"
-              :items="defectosLamina"
-              variant="outlined"
-            ></v-combobox>
-          </v-row>
-
-          <v-row justify="start" v-if="selectedDefectoLamina === 'Otros'">
-            <v-textarea
-              v-model="selectedDefectoLaminaOtros"
-              label="Otros"
-              variant="outlined"
-              dense
-              rows="1"
-              max-rows="4"
-            ></v-textarea>
-          </v-row>
-
-          <v-row justify="start">
-            <v-combobox
-              v-if="
-                selectedDefectoLamina !== 'Ningún defecto' &&
-                selectedDefectoLamina !== ''
-              "
-              v-model="selectedCausaLamina"
-              label="Causa de defecto en lamina"
-              :items="causasLamina"
-              variant="outlined"
-            ></v-combobox>
-          </v-row>
-
-          <v-row justify="start">
-            <v-combobox
-              v-model="selectedDefectoCaja"
-              label="Defecto en caja"
-              :items="defectoCaja"
-              variant="outlined"
-            ></v-combobox>
-          </v-row>
-
-          <v-row justify="start" v-if="selectedDefectoCaja === 'Otros'">
-            <v-textarea
-              v-model="selectedDefectoCajaOtros"
-              label="Otros"
-              variant="outlined"
-              dense
-              rows="1"
-              max-rows="4"
-            ></v-textarea>
-          </v-row>
-
-          <v-row justify="start">
-            <v-combobox
-              v-if="
-                selectedDefectoCaja !== 'Ningún defecto' &&
-                selectedDefectoCaja !== ''
-              "
-              v-model="selectedCausaCaja"
-              label="Causa de defecto en caja"
-              :items="causaCaja"
-              variant="outlined"
-            ></v-combobox>
           </v-row>
           <v-row justify="start">
             <v-textarea
@@ -216,105 +164,121 @@ export default {
         year: "numeric",
       }),
       selectedArea: "",
-      selectedAreaOtra: "",
+      selectedAreaIndex: 0,
+      selectedDefecto: "",
+      selectedTipo: "",
+      tipoGuardar: "",
+      otrosTipos: "",
       selectedTurno: "",
       responsableRechazo: "",
-      selectedDefectoLamina: "",
-      selectedDefectoLaminaOtros: "",
-      selectedCausaLamina: "",
-      selectedDefectoCaja: "",
-      selectedDefectoCajaOtros: "",
-      selectedCausaCaja: "",
       numeroOrden: "",
-      totalKilos: "",
-      checkbox: false,
       orden: {},
       areas: [
-        "corrugadora",
-        "ward1",
-        "ward2",
-        "w3",
-        "w4",
-        "w6",
-        "hy-cor",
-        "j&l",
-        "planificación",
-        "perdida arm.",
-        "desarrollo",
-        "ventas",
-        "despacho",
-        "cerecinado",
-        "maquila",
-        "laboratorio",
-        "desponche",
-        "plástico",
-        "Otra",
+        "ATC",
+        "ADC",
+        "Bodega de rollos",
+        "Bodegas externas",
+        "Centro de armado",
+        "Ceresinadora",
+        "Comexi",
+        "Despacho",
+        "Devolución externa",
+        "Diseño & Desarrollo",
+        "Eterna",
+        "Maquila",
+        "Mermas de armado Obsolescencia",
+        "Planificación",
+        "Rotary corrugadora",
+        "Sector Húmedo",
+        "Sector Seco corr.",
+        "Ventas",
+        "Ward 1",
+        "Ward 2",
+        "Ward 3",
+        "Ward 4",
+        "Ward 6",
+        "HyC2",
+        "Voyuan",
+        "J&L",
+        "Trim",
       ],
-      defectosLamina: [
-        "Ningún defecto",
-        "Curvo",
-        "Despegado",
-        "Desalineado",
-        "Medida errada",
-        "Largo y corto",
-        "Excedentes",
-        "Pliegues",
-        "Onda saltada",
-        "Daño mecanico",
-        "Manejo",
-        "Otros",
-      ],
-      causasLamina: [
-        "Baja Velocidad",
-        "Empalmes",
-        "Corte de papel",
-        "Poca aplicación",
-        "Secado de colero",
-        "Exceso de temperatura",
-        "Falta de temperatura",
-        "Raya en mesa",
-        "Limitadores",
-        "Poco trim",
-        "Diferencia de formato",
-        "Problema de papel",
-        "Cambio de lista",
-        "Reprogragmaciones",
-        "Operacional",
-        "Cuchillos",
-        "Falla mecánica",
-        "Falla eléctrica",
-        "Ensayos",
-        "Exceso de Humedad Papel",
-      ],
-      defectoCaja: [
-        "Ningún defecto",
-        "Problemas de impresión",
-        "Tranconces",
-        "Troquel",
-        "Set-up",
-        "Gap/Descuadre",
-        "Rayado partido",
-        "Otros",
-      ],
-      causaCaja: [
-        "Falta de tinta",
-        "Cartón húmedo",
-        "Cartón absorbente",
-        "Falta de presión anillos",
-        "Tinta no da tono",
-        "Problema de ????",
-        "Falta de presión impresor",
-        "Placas dobladas",
-        "Deslaminado",
-        "Problema eléctrico",
-        "Problema mecánico",
-        "Placas agalletadas???",
-        "Cartón curvo",
-        "Desarrollo de producto",
-        "Primeras cajas",
-        "Operacional",
-        "Problema de matriz",
-        "Ensayos",
+      defectos: [
+        [
+          "Error de ingreso de producto",
+          "Producto obsoleto",
+          "Producto no corresponde",
+        ],
+        ["Pruebas BCT", "Ensayo varios"],
+        ["Deponche interno", "Daño proveedor", "Obsolescencia"],
+        ["Producto dañado", "Producto contaminado", "Obsolescencia"],
+        ["Daño mecánico", "Ajuste", "Atascamientos", "Problema de fábrica"],
+        ["Problema de fábrica", "Mal ceresinado", "Ojo de pescado", "Otros"],
+        ["Desponche saneado", "Pucho"],
+        ["Daño mecánico", "Producto contaminado", "Obsolescencia"],
+        [
+          "Problema de fábrica",
+          "Mermas armado",
+          "Ajuste N.C.",
+          "Error producto",
+          "Transporte",
+        ],
+        [
+          "Fuera especificación",
+          "Colapso",
+          "Error diseño",
+          "No cumple requerimiento",
+        ],
+        ["Mal troquelado", "Daño mecánico", "Atascamientos", "Otros"],
+        [
+          "Problema de fábrica",
+          "Fuera especificación",
+          "No cumple requerimiento",
+          "Otros",
+        ],
+        ["Cajas", "Laminas", "Papel", "Otros"],
+        [
+          "Error de ingreso producto",
+          "Producto obsoleto",
+          "Producto no corresponde",
+          "Fuera especificación",
+        ],
+        [
+          "Cambio programa",
+          "Corte de papel",
+          "Corte cartón sencillo",
+          "Inicio turno",
+          "Empalme preimpreso",
+          "Defecto de calidad",
+          "Otros",
+        ],
+        ["Desponche", "Pucho", "Puente (cartón sencillo)"],
+        [
+          "Curvo",
+          "Desalineado",
+          "Medida erradas",
+          "Ampollado",
+          "Agalletado",
+          "Pliegues",
+          "Daño mecánico",
+          "Piso / manipulación",
+          "Control variables",
+          "Otros",
+        ],
+        [
+          "Fuera especificación",
+          "Error diseño",
+          "No cumple requerimiento",
+          "Obsolescencia",
+        ],
+        ["Problema impresión", "Troquelado", "Set-up", "Atascamiento", "Otros"],
+        ["Problema impresión", "Troquelado", "Set-up", "Atascamiento", "Otros"],
+        ["Problema impresión", "Troquelado", "Set-up", "Atascamiento", "Otros"],
+        ["Problema impresión", "Troquelado", "Set-up", "Atascamiento", "Otros"],
+        ["Problema impresión", "Troquelado", "Set-up", "Atascamiento", "Otros"],
+        ["Problema impresión", "Troquelado", "Set-up", "Atascamiento", "Otros"],
+        ["Descuadre", "Despegado", "Atascamiento", "Daño mecánico"],
+        ["Descuadre", "Despegado", "Atascamiento", "Daño mecánico"],
+        ["Trim Operativo", "Extra trim", "Trim preimpreso"],
       ],
       mostrarConfirmacion: false,
       mostrarError: false,
@@ -322,24 +286,13 @@ export default {
     };
   },
   watch: {
-    // Observar cambios en selectedDefectoLamina
-    selectedDefectoLamina(newDefecto) {
-      if (newDefecto === "Ningún defecto") {
-        this.selectedCausaLamina = ""; // Reiniciar la variable
-      }
-    },
-    // Observar cambios en selectedDefectoCaja
-    selectedDefectoCaja(newDefecto) {
-      if (newDefecto === "Ningún defecto") {
-        this.selectedCausaCaja = ""; // Reiniciar la variable
-      }
+    selectedArea(newSelectedArea) {
+      // Actualizar el índice de selectedAreaIndex cuando cambie selectedArea
+      this.selectedAreaIndex = this.areas.indexOf(newSelectedArea);
+      this.selectedDefecto = "";
     },
   },
   methods: {
-    validarSeleccion(lista, valor) {
-      // Validar que el valor esté presente en la lista
-      return lista.includes(valor);
-    },
     formatFecha(fecha) {
       // Formatea la fecha (cadena ISO 8601) a "DD-MM-YYYY"
       const parts = fecha.split("T")[0].split("-");
@@ -367,16 +320,6 @@ export default {
 
         this.orden = await this.obtenerOrden();
 
-        if (
-          this.selectedDefectoLamina === "Ningún defecto" &&
-          this.selectedDefectoCaja === "Ningún defecto"
-        ) {
-          this.mostrarError = true;
-          this.mensajeError =
-            "Seleccione al menos un defecto en lámina o en caja.";
-          return;
-        }
-
         // Verificar si se ha obtenido la orden correctamente
         if (
           !this.orden ||
@@ -389,104 +332,45 @@ export default {
           return;
         }
 
-        if (!this.validarSeleccion(this.areas, this.selectedArea)) {
-          this.mostrarError = true;
-          this.mensajeError = "Área seleccionada no válida.";
-          return;
-        }
-
-        if (!this.validarSeleccion(["1", "2", "3"], this.selectedTurno)) {
-          this.mostrarError = true;
-          this.mensajeError = "Turno seleccionado no válido.";
-          return;
-        }
-
         if (this.responsableRechazo === "") {
           this.mostrarError = true;
           this.mensajeError = "Ingrese un responsable de rechazo.";
           return;
         }
 
-        if (
-          !this.validarSeleccion(
-            this.defectosLamina,
-            this.selectedDefectoLamina
-          )
-        ) {
+        if (this.selectedTipo === "Otros") {
           this.mostrarError = true;
-          this.mensajeError = "Defecto en lámina seleccionado no válido.";
+          if (this.otrosTipos === "") {
+            this.mensajeError = "Ingrese un tipo de desperdicio.";
+            return;
+          } else {
+            this.tipoGuardar = this.otrosTipos;
+          }
+        }
+
+        if (this.selectedTipo !== "Otros") {
+          this.tipoGuardar = this.selectedTipo;
+        }
+
+        if (this.selectedArea === "") {
+          this.mostrarError = true;
+          this.mensajeError = "Ingrese un área.";
           return;
         }
 
-        if (
-          this.selectedDefectoLamina === "Otros" &&
-          !this.selectedDefectoLaminaOtros.trim()
-        ) {
+        if (this.selectedDefecto === "") {
           this.mostrarError = true;
-          this.mensajeError =
-            "Ingrese detalles para 'Otros' en defecto en lámina.";
-          return;
-        }
-
-        // Validar la causa solo si el defecto no es "Ningún defecto"
-        if (
-          this.selectedDefectoLamina !== "Ningún defecto" &&
-          !this.validarSeleccion(this.causasLamina, this.selectedCausaLamina)
-        ) {
-          this.mostrarError = true;
-          this.mensajeError =
-            "Causa de defecto en lámina seleccionada no válida.";
-          return;
-        }
-
-        if (
-          !this.validarSeleccion(this.defectoCaja, this.selectedDefectoCaja)
-        ) {
-          this.mostrarError = true;
-          this.mensajeError = "Defecto en caja seleccionado no válido.";
-          return;
-        }
-
-        if (
-          this.selectedDefectoCaja === "Otros" &&
-          !this.selectedDefectoCajaOtros.trim()
-        ) {
-          this.mostrarError = true;
-          this.mensajeError =
-            "Ingrese detalles para 'Otros' en defecto en caja.";
-          return;
-        }
-
-        // Validar la causa solo si el defecto no es "Ningún defecto"
-        if (
-          this.selectedDefectoCaja !== "Ningún defecto" &&
-          !this.validarSeleccion(this.causaCaja, this.selectedCausaCaja)
-        ) {
-          this.mostrarError = true;
-          this.mensajeError =
-            "Causa de defecto en caja seleccionada no válida.";
+          this.mensajeError = "Ingrese un defecto.";
           return;
         }
 
         let nuevoControl = {
           nroRevision: 1,
+          tipo: this.tipoGuardar,
           area: this.selectedArea,
-          areaOtra:
-            this.selectedArea === "Otra" ? this.selectedAreaOtra : undefined,
+          defecto: this.selectedDefecto,
           turno: parseInt(this.selectedTurno),
           responsable: this.responsableRechazo,
-          defectoEnLamina: this.selectedDefectoLamina,
-          defectoEnLaminaOtros: this.selectedDefectoLaminaOtros,
-          causaLamina:
-            this.selectedDefectoLamina !== "Ningún defecto"
-              ? this.selectedCausaLamina
-              : undefined,
-          defectoEnCaja: this.selectedDefectoCaja,
-          defectoEnCajaOtros: this.selectedDefectoCajaOtros,
-          causaCaja:
-            this.selectedDefectoCaja !== "Ningún defecto"
-              ? this.selectedCausaCaja
-              : undefined,
           cliente: this.orden.CustomerName,
           producto: this.orden.ProductDescription,
           cantidad: this.orden.QuantityOrdered,
@@ -503,7 +387,6 @@ export default {
         const nuevoControlConVersiones = {
           versiones: [nuevoControl],
         };
-
         let res = await axios.post(
           "http://localhost:3000/api/agregar",
           nuevoControlConVersiones
@@ -511,10 +394,13 @@ export default {
 
         if (res.status === 201) {
           //formatear res.data.fecha
-          res.data.versiones[0].fecha = this.formatFecha(res.data.versiones[0].fecha);
-          res.data.versiones[0].idAux = res.data.idAux;
+          const doc = res.data.versiones[0]
+          doc.fecha = this.formatFecha(
+            doc.fecha
+          );
+          doc.idAux = res.data.idAux;
           //generar el pdf
-          const pdfDefinition = generarPdf(res.data.versiones[0]);
+          const pdfDefinition = generarPdf(doc);
 
           // Abre el PDF en una nueva ventana o descárgalo
           pdfMake.createPdf(pdfDefinition).open();

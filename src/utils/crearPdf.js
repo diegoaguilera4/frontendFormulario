@@ -29,14 +29,12 @@ export function generarPdf(data) {
           widths: ["*", "*"],
           body: [
             [{ text: "Código documento", style: "tableHeader" }, data.idAux],
-            [
-              { text: "Área", style: "tableHeader" },
-              data.area === "Otra"
-                ? data.areaOtra + " (" + data.area + ")"
-                : data.area,
-            ],
             [{ text: "Fecha", style: "tableHeader" }, data.fecha],
             [{ text: "Turno", style: "tableHeader" }, data.turno],
+            [{ text: "Tipo", style: "tableHeader" }, data.tipo],
+            [{ text: "Area", style: "tableHeader" }, data.area],
+            [{ text: "Defecto", style: "tableHeader" }, data.defecto],
+
             [
               { text: "Responsable del rechazo", style: "tableHeader" },
               data.responsable,
@@ -60,50 +58,6 @@ export function generarPdf(data) {
       },
     },
   };
-
-  // Verificar si hay defecto en lámina
-  if (data.defectoEnLamina && data.defectoEnLamina !== "Ningún defecto") {
-    pdfDefinition.content.push({
-      style: "tableExample",
-      table: {
-        widths: ["*", "*"],
-        body: [
-          [
-            { text: "Defecto en lámina", style: "tableHeader" },
-            data.defectoEnLamina === "Otros"
-              ? data.defectoEnLaminaOtros + " (" + data.defectoEnLamina + ")"
-              : data.defectoEnLamina,
-          ],
-          [
-            { text: "Causa de defecto en lámina", style: "tableHeader" },
-            data.causaLamina,
-          ],
-        ],
-      },
-    });
-  }
-
-  // Verificar si hay defecto en caja
-  if (data.defectoEnCaja && data.defectoEnCaja !== "Ningún defecto") {
-    pdfDefinition.content.push({
-      style: "tableExample",
-      table: {
-        widths: ["*", "*"],
-        body: [
-          [
-            { text: "Defecto en caja", style: "tableHeader" },
-            data.defectoEnCaja === "Otros"
-              ? data.defectoEnCajaOtros + " (" + data.defectoEnCaja + ")"
-              : data.defectoEnCaja,
-          ],
-          [
-            { text: "Causa de defecto en caja", style: "tableHeader" },
-            data.causaCaja,
-          ],
-        ],
-      },
-    });
-  }
 
   pdfDefinition.content.push({
     style: "tableExample",

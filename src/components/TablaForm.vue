@@ -101,48 +101,29 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <p>Código documento: {{ verItem._id }}</p>
+                  <p>Código documento: {{ verItem.idAux}}</p>
+                </v-row>
+                <v-row>
+                  <p>Id: {{ verItem.idPadre }}</p>
                 </v-row>
                 <v-row
                   ><p>Revisión N°: {{ verItem.nroRevision }}</p>
-                </v-row>
-                <v-row v-if="!verItem.areaOtra">
-                  <p>Área: {{ verItem.area }}</p>
-                </v-row>
-                <v-row v-if="verItem.areaOtra">
-                  <p>Área: {{ verItem.areaOtra }} (Otra)</p>
-                </v-row>
-                <v-row>
-                  <p>Fecha: {{ verItem.fecha }}</p>
                 </v-row>
                 <v-row>
                   <p>Turno: {{ verItem.turno }}</p>
                 </v-row>
                 <v-row>
+                  <p>Área: {{ verItem.area }}</p>
+                </v-row>
+                <v-row>
+                  <p>Defecto: {{ verItem.defecto }}</p>
+                </v-row>
+                <v-row>
+                  <p>Fecha: {{ verItem.fecha }}</p>
+                </v-row>
+                
+                <v-row>
                   <p>Responsable: {{ verItem.responsable }}</p>
-                </v-row>
-                <v-row v-if="!verItem.defectoEnLaminaOtros">
-                  <p>Defecto en lamina: {{ verItem.defectoEnLamina }}</p>
-                </v-row>
-                <v-row v-if="verItem.defectoEnLaminaOtros">
-                  <p>
-                    Defecto en lamina:
-                    {{ verItem.defectoEnLaminaOtros }} (Otros)
-                  </p>
-                </v-row>
-                <v-row v-if="verItem.defectoEnLamina !== 'Ningún defecto'">
-                  <p>Causa lamina: {{ verItem.causaLamina }}</p>
-                </v-row>
-                <v-row v-if="!verItem.defectoEnCajaOtros">
-                  <p>Defecto en caja: {{ verItem.defectoEnCaja }}</p>
-                </v-row>
-                <v-row v-if="verItem.defectoEnCajaOtros">
-                  <p>
-                    Defecto en caja: {{ verItem.defectoEnCajaOtros }} (Otros)
-                  </p>
-                </v-row>
-                <v-row v-if="verItem.defectoEnCaja !== 'Ningún defecto'">
-                  <p>Causa caja: {{ verItem.causaCaja }}</p>
                 </v-row>
                 <v-row>
                   <p>N° Op: {{ verItem.nroOp }}</p>
@@ -244,19 +225,25 @@ export default {
     controlesUltimos: [],
     verIndex: -1,
     verItem: {
-      _id: "",
+      idAux: "",
+      idPadre: "",
       nroRevision: "",
+      tipo: "",
       area: "",
-      fecha: "",
+      defecto: "",
       turno: "",
+      fecha: "",
       responsable: "",
     },
     defaultItem: {
-      _id: "",
+      idAux: "",
+      idPadre: "",
       nroRevision: "",
+      tipo: "",
       area: "",
-      fecha: "",
+      defecto: "",
       turno: "",
+      fecha: "",
       responsable: "",
     },
     areaFilter: null,
