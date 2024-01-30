@@ -142,9 +142,7 @@ export default {
       { key: "kilos", title: "Kilos" },
       { title: "Acciones", key: "actions", sortable: false },
     ],
-    controles: [],
     mermas: [],
-    controlesUltimos: [],
     verIndex: -1,
     verItem: {
       _id: "",
@@ -274,7 +272,7 @@ export default {
           // Puedes lanzar una excepción personalizada o manejarla según tus necesidades.
         }
       } catch (error) {
-        console.error("Error al obtener los controles:", error.message);
+        console.error("Error al obtener las mermas", error.message);
         // Puedes mostrar un mensaje al usuario, registrar el error o realizar otras acciones según tus necesidades.
       }
     },
@@ -332,9 +330,9 @@ export default {
     },
     save() {
       if (this.verIndex > -1) {
-        Object.assign(this.controles[this.verIndex], this.verItem);
+        Object.assign(this.mermas[this.verIndex], this.verItem);
       } else {
-        this.controles.push(this.verItem);
+        this.mermas.push(this.verItem);
       }
       this.close();
     },

@@ -62,9 +62,14 @@ export default {
             const response = await axios.get(
               `http://localhost:3000/api/obtenerPorIdAux/${this.barcode}`
             );
+      
             if (response.status === 200) {
+              if(response.data.picado){
+                this.mensajeError = "El documento ya fue picado";
+                this.mostrarError = true;
+                return;
+              }
               this.irFormPeso(response.data.idAux);
-
               return;
             } else {
               this.mensajeError = "No se encontró el documento";

@@ -10,66 +10,10 @@
         append-inner-icon="mdi-magnify"
       ></v-text-field>
     </v-col>
-    <v-col>
-      <v-select
-        v-model="areaFilter"
-        clearable
-        chips
-        label="Filtrar por área"
-        :items="getUniqueValues('area')"
-        append-inner-icon="mdi-domain"
-        height="20"
-      ></v-select>
-    </v-col>
-    <v-col>
-      <v-select
-        v-model="turnoFilter"
-        clearable
-        chips
-        label="Filtrar por turno"
-        :items="getUniqueValues('turno')"
-        append-inner-icon="mdi-clock-time-four"
-      ></v-select>
-    </v-col>
-    <v-col>
-      <v-select
-        v-model="responsableFilter"
-        clearable
-        chips
-        label="Filtrar por responsable"
-        :items="getUniqueValues('responsable')"
-        append-inner-icon="mdi-account"
-      ></v-select>
-    </v-col>
-
-    <v-col>
-      <VueDatePicker
-        v-model="filtroFecha"
-        locale="es"
-        format="dd/MM/yyyy"
-        cancelText="CANCELAR"
-        selectText="SELECCIONAR"
-        :enable-time-picker="false"
-        range
-        placeholder="Filtrar por rango de fechas"
-        :partial-range="true"
-      />
-    </v-col>
-  </v-row>
-  <v-row style="margin-left: 1%">
-    <v-switch
-      v-model="switchTabla"
-      :label="
-        switchTabla
-          ? 'Mostrando últimas versiones'
-          : 'Mostrando todas las versiones'
-      "
-      color="green-darken-1"
-    ></v-switch>
   </v-row>
   <v-data-table
     :headers="headers"
-    :items="filteredControles"
+    :items="filteredPicados"
     style="margin-top: 20px; text-align: left"
     items-per-page-text="Documentos por página"
     page-text="{0}-{1} de {2}"
@@ -87,92 +31,48 @@
         >
           Exportar
         </v-btn>
-        <v-btn
-          variant="tonal"
-          append-icon="mdi-plus-circle"
-          @click="irNuevoDoc()"
-        >
-          Crear documento
-        </v-btn>
-        <v-dialog v-model="dialog" max-width="500px">
-          <v-card style="border-radius: 20px; padding: 10px">
-            <v-card-title class="text-center"> Documento </v-card-title>
+        <v-dialog v-model="dialogDelete" max-width="600px">
+          <v-card
+            class="text-center"
+            style="border-radius: 20px; padding: 15px"
+          >
+            <v-card-title class="text-h5"
+              >¿Estás seguro que deseas eliminar esta merma?</v-card-title
+            >
+            <v-row>
+              <v-card-text>
+                patente: {{ editedItem.patenteCamion }} empresa:
+                {{ editedItem.empresaEnvia }} kilos: {{ editedItem.kilos }}
+              </v-card-text>
+            </v-row>
 
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <p>Código documento: {{ verItem.idAux }}</p>
-                </v-row>
-                <v-row>
-                  <p>Id: {{ verItem.idPadre }}</p>
-                </v-row>
-                <v-row
-                  ><p>Revisión N°: {{ verItem.nroRevision }}</p>
-                </v-row>
-                <v-row>
-                  <p>Turno: {{ verItem.turno }}</p>
-                </v-row>
-                <v-row>
-                  <p>Área: {{ verItem.area }}</p>
-                </v-row>
-                <v-row>
-                  <p>Causa: {{ verItem.causa }}</p>
-                </v-row>
-                <v-row>
-                  <p>Fecha: {{ verItem.fecha }}</p>
-                </v-row>
-
-                <v-row>
-                  <p>Responsable: {{ verItem.responsable }}</p>
-                </v-row>
-                <v-row>
-                  <p>N° Op: {{ verItem.nroOp }}</p>
-                </v-row>
-                <v-row>
-                  <p>Código: {{ verItem.estNumber }}</p>
-                </v-row>
-                <v-row>
-                  <p>Producto: {{ verItem.producto }}</p>
-                </v-row>
-                <v-row>
-                  <p>Cliente: {{ verItem.cliente }}</p>
-                </v-row>
-                <v-row>
-                  <p>Cantidad: {{ verItem.cantidad }}</p>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions class="justify-center">
-              <v-btn color="black" variant="tonal" @click="crearPdf(verItem)">
-                <v-icon left color="red"> mdi-file-pdf </v-icon>
-                Generar PDF
-              </v-btn>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue-darken-1"
+                variant="tonal"
+                @click="closeDelete"
+                append-icon="mdi-close-circle-outline"
+                >Cancelar</v-btn
+              >
               <v-btn
                 color="red-darken-1"
                 variant="tonal"
-                @click="close"
-                append-icon="mdi-close-circle-outline"
+                @click="deleteItemConfirm"
+                append-icon="mdi-delete"
+                >Eliminar</v-btn
               >
-                Cerrar
-              </v-btn>
+              <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </v-toolbar>
     </template>
     <template v-slot:[`item.actions`]="{ item }">
-      <v-icon size="small" class="me-2" @click="mostrarItem(item)">
-        mdi-eye
-      </v-icon>
-      <v-icon
-        v-if="switchTabla && !item.picado"
-        size="small"
-        class="me-2"
-        @click="editarItem(item)"
-      >
+      <v-icon size="small" class="me-2" @click="editarItem(item)">
         mdi-pencil
       </v-icon>
+      <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
     <template v-slot:no-data>
       <p>No existen resultados</p>
@@ -209,49 +109,45 @@ export default {
   data: () => ({
     search: "",
     dialog: false,
+    dialogDelete: false,
     noHayDatos: false,
     headers: [
-      { key: "idAux", title: "Código documento" },
-      { key: "nroRevision", title: "N° revisión " },
-      {
-        key: "fecha",
-        title: "Fecha",
-        sortBy: (a, b) => new Date(b) - new Date(a),
-      },
+      { key: "desperdicio.idAux", title: "id" },
+      { key: "persona.rut", title: "Rut picador" },
+      { key: "persona.nombre", title: "Nombre picador" },
       { key: "turno", title: "Turno" },
-      { key: "tipo", title: "Tipo" },
-      { key: "area", title: "Área" },
-      { key: "causa", title: "Causa" },
-      { key: "responsable", title: "Responsable" },
-      { key: "picado", title: "Picado" },
+      { key: "kilos", title: "Kilos" },
 
-      { title: "Acciones", key: "actions", sortable: false },
     ],
-    controles: [],
-    controlesTodos: [],
-    controlesUltimos: [],
+    picados: [],
     verIndex: -1,
     verItem: {
-      idAux: "",
-      idPadre: "",
-      nroRevision: "",
-      tipo: "",
-      area: "",
-      causa: "",
-      turno: "",
+      _id: "",
+      nombre: "",
+      rut: "",
       fecha: "",
-      responsable: "",
+      patenteCamion: "",
+      empresaEnvia: "",
+      kilos: "",
+    },
+    editedIndex: -1,
+    editedItem: {
+      _id: "",
+      nombre: "",
+      rut: "",
+      fecha: "",
+      patenteCamion: "",
+      empresaEnvia: "",
+      kilos: "",
     },
     defaultItem: {
-      idAux: "",
-      idPadre: "",
-      nroRevision: "",
-      tipo: "",
-      area: "",
-      causa: "",
-      turno: "",
+      _id: "",
+      nombre: "",
+      rut: "",
       fecha: "",
-      responsable: "",
+      patenteCamion: "",
+      empresaEnvia: "",
+      kilos: "",
     },
     areaFilter: null,
     turnoFilter: null,
@@ -259,13 +155,10 @@ export default {
     selectedDate: null,
     showDatePicker: false,
     filtroFecha: new ref(),
-    nuevosControles: [],
-    switchTabla: true,
   }),
 
   computed: {
-    filteredControles() {
-      this.actualizarControles();
+    filteredPicados() {
       const filtroFechaProxy = this.filtroFecha;
       // Verificar si filtroFechaProxy está definido
       if (filtroFechaProxy) {
@@ -273,39 +166,19 @@ export default {
         const fecha2 = filtroFechaProxy[1];
         fecha1.setHours(0, 0, 0, 0);
         fecha2.setHours(23, 59, 59, 999);
-        return this.controles.filter((item) => {
+        return this.picados.filter((item) => {
           //transformar item.date de dd-mm-yyyy a mm-dd-yyyy
           const [day, month, year] = item.fecha.split("-");
           const itemDate = new Date(`${month}-${day}-${year}`);
           return (
             (this.searchFilter(item) || this.search === "") &&
-            (this.areaFilter === null ||
-              this.areaFilter === "" ||
-              item.area === this.areaFilter) &&
-            (this.turnoFilter === null ||
-              this.turnoFilter === "" ||
-              item.turno === this.turnoFilter) &&
-            (this.responsableFilter === null ||
-              this.responsableFilter === "" ||
-              item.responsable === this.responsableFilter) &&
             itemDate >= fecha1 &&
             itemDate <= fecha2
           );
         });
       } else {
-        return this.controles.filter((item) => {
-          return (
-            (this.searchFilter(item) || this.search === "") &&
-            (this.areaFilter === null ||
-              this.areaFilter === "" ||
-              item.area === this.areaFilter) &&
-            (this.turnoFilter === null ||
-              this.turnoFilter === "" ||
-              item.turno === this.turnoFilter) &&
-            (this.responsableFilter === null ||
-              this.responsableFilter === "" ||
-              item.responsable === this.responsableFilter)
-          );
+        return this.picados.filter((item) => {
+          return this.searchFilter(item) || this.search === "";
         });
       }
     },
@@ -315,54 +188,19 @@ export default {
     dialog(val) {
       val || this.close();
     },
+    dialogDelete(val) {
+      val || this.closeDelete();
+    },
   },
 
   created() {
     this.initialize();
-    this.obtenerUltimos();
-    this.obtenerControles();
   },
 
   methods: {
-    actualizarControles() {
-      if (this.switchTabla) {
-        this.controles = this.controlesUltimos;
-      } else {
-        this.controles = this.controlesTodos;
-      }
-    },
-    async obtenerUltimos() {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/api/obtenerTodos"
-        );
-
-        // Verificar si la respuesta tiene datos
-        if (response.data) {
-          this.controlesUltimos = response.data;
-          this.nuevosControles = [];
-          this.controlesUltimos.forEach((control) => {
-            var controlAgregar =
-              control.versiones[control.versiones.length - 1];
-            controlAgregar.idAux = control.idAux;
-            controlAgregar.idPadre = control._id;
-            controlAgregar.picado = control.picado;
-            controlAgregar.fecha = this.formatFecha(controlAgregar.fecha);
-            this.nuevosControles.push(controlAgregar);
-          });
-          this.controlesUltimos = this.nuevosControles;
-        } else {
-          console.error("La respuesta no contiene datos válidos.");
-          // Puedes lanzar una excepción personalizada o manejarla según tus necesidades.
-        }
-      } catch (error) {
-        console.error("Error al obtener los controles:", error.message);
-        // Puedes mostrar un mensaje al usuario, registrar el error o realizar otras acciones según tus necesidades.
-      }
-    },
     getUniqueValues(columnKey) {
       const uniqueValues = new Set();
-      this.filteredControles.forEach((item) => {
+      this.filteredPicados.forEach((item) => {
         if (item[columnKey]) {
           uniqueValues.add(item[columnKey]);
         }
@@ -382,9 +220,9 @@ export default {
     clearSearch() {
       this.search = "";
     },
-    irNuevoDoc() {
+    irNuevaMerma() {
       // Puedes redirigir a la ruta del formulario aquí, por ejemplo:
-      this.$router.push("/nuevoDocumento");
+      this.$router.push("/nuevaMerma");
     },
     formatFecha(fecha) {
       const [year, month, day] = new Date(fecha)
@@ -393,37 +231,40 @@ export default {
         .split("-");
       return `${day}-${month}-${year}`;
     },
-    async obtenerControles() {
+    async obtenerPicados() {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/obtenerTodos"
+          "http://localhost:3000/controlPicadora/obtenerTodos"
         );
-
         // Verificar si la respuesta tiene datos
         if (response.data) {
-          this.controlesTodos = response.data;
-          this.nuevosControles = [];
-          this.controlesTodos.forEach((control) => {
-            control.versiones.forEach((version) => {
-              version.fecha = this.formatFecha(version.fecha);
-              version.idAux = control.idAux;
-              version.idPadre = control._id;
-              this.nuevosControles.push(version);
-            });
-          });
-          this.controlesTodos = this.nuevosControles;
+          this.picados = response.data;
         } else {
           console.error("La respuesta no contiene datos válidos.");
           // Puedes lanzar una excepción personalizada o manejarla según tus necesidades.
         }
       } catch (error) {
-        console.error("Error al obtener los controles:", error.message);
+        console.error("Error al obtener los controles de picado:", error.message);
         // Puedes mostrar un mensaje al usuario, registrar el error o realizar otras acciones según tus necesidades.
       }
     },
+    async eliminarMerma() {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/merma/eliminar/${this.editedItem._id}`
+        );
+        if (response.status === 200) {
+          console.log("Merma eliminada");
+        } else {
+          console.error("Error al eliminar la merma");
+        }
+      } catch (error) {
+        console.error("Error al eliminar la merma:", error.message);
+      }
+    },
     initialize() {
-      this.controles = [];
-      this.obtenerUltimos();
+      this.picados = [];
+      this.obtenerPicados();
     },
     crearPdf(data) {
       // Generar el PDF
@@ -431,20 +272,20 @@ export default {
       // Abre el PDF en una nueva ventana
       pdfMake.createPdf(pdf).open();
     },
-
-    mostrarItem(item) {
-      this.verIndex = this.controles.indexOf(item);
-      this.verItem = Object.assign({}, item);
-      this.dialog = true;
-    },
     editarItem(item) {
-      //Enviar a EditarDoc con el id del item
-      this.$router.push({
-        name: "EditarDoc",
-        params: { id: item.idPadre, nroRevision: item.nroRevision },
-      });
+      //Enviar a editarMerma con el id
+      this.$router.push(`/editarMerma/${item._id}`);
     },
-
+    deleteItem(item) {
+      this.editedIndex = this.picados.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialogDelete = true;
+    },
+    deleteItemConfirm() {
+      this.picados.splice(this.editedIndex, 1);
+      this.eliminarMerma();
+      this.closeDelete();
+    },
     close() {
       this.dialog = false;
       this.$nextTick(() => {
@@ -452,22 +293,28 @@ export default {
         this.verIndex = -1;
       });
     },
-
+    closeDelete() {
+      this.dialogDelete = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
     save() {
       if (this.verIndex > -1) {
-        Object.assign(this.controles[this.verIndex], this.verItem);
+        Object.assign(this.picados[this.verIndex], this.verItem);
       } else {
-        this.controles.push(this.verItem);
+        this.picados.push(this.verItem);
       }
       this.close();
     },
     exportarExcel() {
       //verificar que filteredRegistros tenga datos
-      if (this.filteredControles.length > 0) {
-        const worksheet = XLSX.utils.json_to_sheet(this.filteredControles);
+      if (this.filteredPicados.length > 0) {
+        const worksheet = XLSX.utils.json_to_sheet(this.filteredPicados);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Documentos");
-        XLSX.writeFile(workbook, "Documentos.xlsx");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Mermas");
+        XLSX.writeFile(workbook, "Mermas.xlsx");
       } else {
         this.noHayDatos = true;
       }

@@ -226,8 +226,18 @@ export default {
           nuevoControlPicadora
         );
         if (res.status === 201) {
-          console.log("Control picadora creado correctamente");
-          this.$router.push("/escanear");
+          let res2 = await axios.put(
+            `http://localhost:3000/api/actualizarId/${this.idPadre}`,
+            {
+              picado: true,
+            }
+          );
+          if (res2.status === 200) {
+            console.log("Documento actualizado correctamente");
+          } else {
+            console.error("Error al actualizar el documento");
+          }
+          this.$router.push("/");
         } else {
           console.error("Error al crear el control picadora");
         }

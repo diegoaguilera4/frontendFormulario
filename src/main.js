@@ -10,6 +10,7 @@ import HomeEscaneo from './views/HomeEscaneo.vue'
 import HomeMerma from './views/HomeMerma.vue'
 import FormularioMerma from './views/FormularioMerma.vue'
 import EditarMerma from './views/EditarMerma.vue'
+import HomePicado from './views/HomePicado.vue'
 import App from './App.vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -24,6 +25,7 @@ const routes = [
   { path: '/formMerma', name: 'FormMerma', component: HomeMerma },
   { path: '/nuevaMerma', name: 'NuevaMerma', component: FormularioMerma },
   { path: '/editarMerma/:id', name: 'EditarMerma', component: EditarMerma },
+  { path: '/picado', component: HomePicado },
 ]
 
 const router = VueRouter.createRouter({
