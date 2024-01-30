@@ -3,36 +3,35 @@
     <v-form fast-fail @submit.prevent>
       <v-row justify="center">
         <v-card class="card-sombra">
-        <v-card-title style="margin-bottom: 20px"
-          >Escanea un código de barras</v-card-title
-        >
-        <v-card-text>
-          <v-row align="center" justify="center">
-            <v-text-field
-              v-model="barcode"
-              label="Código de barras"
-              style="width: 50px"
-            ></v-text-field>
-          </v-row>
-          <v-row> </v-row>
-        </v-card-text>
-        <v-card-actions class="justify-center">
-          <v-btn
-            color="primary"
-            variant="tonal"
-            @click="scanBarcode"
-            append-icon="mdi-barcode-scan"
-            >Escanear</v-btn
+          <v-card-title style="margin-bottom: 20px"
+            >Escanea un código de barras</v-card-title
           >
-        </v-card-actions>
-      </v-card>
-      <error-dialog
-        :mostrarError="mostrarError"
-        :mensajeError="mensajeError"
-        @cerrar-dialogo="cerrarDialogo"
-      />
+          <v-card-text>
+            <v-row align="center" justify="center">
+              <v-text-field
+                v-model="barcode"
+                label="Código de barras"
+                style="width: 50px"
+              ></v-text-field>
+            </v-row>
+            <v-row> </v-row>
+          </v-card-text>
+          <v-card-actions class="justify-center">
+            <v-btn
+              color="primary"
+              variant="tonal"
+              @click="scanBarcode"
+              append-icon="mdi-barcode-scan"
+              >Escanear</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+        <error-dialog
+          :mostrarError="mostrarError"
+          :mensajeError="mensajeError"
+          @cerrar-dialogo="cerrarDialogo"
+        />
       </v-row>
-      
     </v-form>
   </v-sheet>
 </template>
@@ -47,7 +46,6 @@ export default {
   data() {
     return {
       barcode: "",
-      documento: {},
       mostrarError: false,
       mensajeError: "",
     };
@@ -60,16 +58,21 @@ export default {
           this.mostrarError = true;
           return;
         } else {
-          const response = await axios.get(
-            `http://localhost:3000/api/obtener/${this.barcode}`
-          );
-          if (response.status === 200) {
-            this.documento = response.data;
-            this.irFormPeso(this.documento._id);
+          try {
+            const response = await axios.get(
+              `http://localhost:3000/api/obtenerPorIdAux/${this.barcode}`
+            );
+            if (response.status === 200) {
+              this.irFormPeso(response.data.idAux);
 
-            return;
-          } else {
-            this.mensajeError = "No se encontró el documento";
+              return;
+            } else {
+              this.mensajeError = "No se encontró el documento";
+              this.mostrarError = true;
+              return;
+            }
+          } catch (error) {
+            this.mensajeError = "Error para encontrar el documento";
             this.mostrarError = true;
             return;
           }

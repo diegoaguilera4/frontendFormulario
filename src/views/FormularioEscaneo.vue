@@ -13,25 +13,31 @@
           >
             Control de desperdicio
           </v-card-title>
-          <v-row style="margin-top: 20px; ">
+          <v-row style="margin-top: 20px">
             <v-col>
               <v-card-text class="subtitulos">
                 N° revisión: {{ documento.nroRevision }}</v-card-text
               >
               <v-card-text class="subtitulos">
+                Turno: {{ documento.turno }}</v-card-text
+              >
+              <v-card-text class="subtitulos">
+                Tipo: {{ documento.tipo }}</v-card-text
+              >
+              <v-card-text class="subtitulos">
                 Área: {{ documento.area }}</v-card-text
               >
               <v-card-text class="subtitulos">
-                Turno: {{ documento.turno }}</v-card-text
+                Causa: {{ documento.causa }}</v-card-text
               >
               <v-card-text class="subtitulos">
                 Responsable: {{ documento.responsable }}</v-card-text
               >
+            </v-col>
+            <v-col align-self="center">
               <v-card-text class="subtitulos">
                 Fecha: {{ documento.fecha }}</v-card-text
               >
-            </v-col>
-            <v-col align-self="center">
               <v-card-text class="subtitulos">
                 N° Op: {{ documento.nroOp }}</v-card-text
               >
@@ -44,24 +50,47 @@
               <v-card-text class="subtitulos">
                 Cliente: {{ documento.cliente }}</v-card-text
               >
-              <v-card-text v-if="documento.totalKilos" class="subtitulos">
-                Kilos: {{ documento.totalKilos }}</v-card-text
+              <v-card-text class="subtitulos">
+                Cantidad: {{ documento.cantidad }}</v-card-text
               >
             </v-col>
           </v-row>
-          <v-row justify="center" style="margin-bottom:10px">
-            <v-btn
-                color="black"
-                variant="tonal"
-                @click="crearPdf(documento)"
-              >
-                <v-icon left color="red"> mdi-file-pdf </v-icon>
-                Ver PDF
-              </v-btn>
+          <v-row justify="center" style="margin-bottom: 10px">
+            <v-btn color="black" variant="tonal" @click="crearPdf(documento)">
+              <v-icon left color="red"> mdi-file-pdf </v-icon>
+              Ver PDF
+            </v-btn>
           </v-row>
-
           <v-row justify="center">
             <v-textarea
+              v-model="nombre"
+              label="Nombre"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
+          <v-row justify="center">
+            <v-textarea
+              v-model="rut"
+              label="RUT"
+              variant="outlined"
+              dense
+              rows="1"
+              max-rows="4"
+            ></v-textarea>
+          </v-row>
+          <v-row justify="start">
+            <v-select
+              v-model="selectedTurno"
+              label="Turno"
+              :items="['1', '2', '3']"
+            ></v-select>
+          </v-row>
+          <v-row justify="center">
+            <v-textarea
+              v-model="totalKilos"
               label="Total kilos"
               variant="outlined"
               dense
@@ -71,7 +100,12 @@
           </v-row>
           <v-row>
             <v-col
-              ><v-btn variant="tonal" block class="mt-2" color="green-darken-1" append-icon="mdi-content-save"
+              ><v-btn
+                variant="tonal"
+                block
+                class="mt-2"
+                color="green-darken-1"
+                append-icon="mdi-content-save"
                 >Guardar</v-btn
               ></v-col
             >
@@ -102,25 +136,29 @@ export default {
   data() {
     return {
       id: "",
+      idAux: "",
       orden: {},
       documento: {},
       numeroOrden: "",
+      nombre: "",
+      rut: "",
+      selectedTurno: "",
+      totalKilos: "",
     };
   },
   mounted() {
-    this.id = this.$route.params.id;
+    this.idAux = this.$route.params.idAux;
     // Realiza acciones con el ID, por ejemplo, llama a obtenerDoc con el ID
-    this.obtenerDoc(this.id);
+    this.obtenerDoc(this.idAux);
   },
   methods: {
     async obtenerDoc(id) {
       try {
         let res = await axios.get(
-          `http://localhost:3000/api/obtener/${id}/`
+          `http://localhost:3000/api/obtenerPorIdAux/${id}/`
         );
-        this.documento = res.data;
-        this.documento = this.documento.versiones[this.documento.versiones.length - 1] ;
-        this.documento.idAux = res.data.idAux;
+        this.documento = res.data.version;
+        this.idAux = res.data.idAux;
         this.documento.fecha = this.formatearFecha(this.documento.fecha);
       } catch (error) {
         console.error(
@@ -130,6 +168,9 @@ export default {
       }
     },
     crearPdf(data) {
+      console.log(data);
+      const doc = data;
+      doc.idAux = this.idAux;
       // Generar el PDF
       const pdf = generarPdf(data);
       // Abre el PDF en una nueva ventana

@@ -17,7 +17,7 @@ const routes = [
   { path: '/nuevoDocumento', name: 'NuevoDoc', component: FormularioControl },
   { path: '/editarDocumento/:id/:nroRevision', name: 'EditarDoc', component: EditarDoc },
   { path: '/escanear', component: HomeEscaneo },
-  { path: '/formEscaneo/:id', name: 'FormEscaneo', component: FormularioEscaneo }
+  { path: '/formEscaneo/:idAux', name: 'FormEscaneo', component: FormularioEscaneo }
 ]
 
 const router = VueRouter.createRouter({
