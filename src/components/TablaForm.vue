@@ -116,7 +116,7 @@
                   <p>Área: {{ verItem.area }}</p>
                 </v-row>
                 <v-row>
-                  <p>Defecto: {{ verItem.defecto }}</p>
+                  <p>Causa: {{ verItem.causa }}</p>
                 </v-row>
                 <v-row>
                   <p>Fecha: {{ verItem.fecha }}</p>
@@ -207,16 +207,16 @@ export default {
     noHayDatos: false,
     headers: [
       { key: "idAux", title: "Código documento" },
-      { key: "idPadre", title: "id" },
-
-      { key: "nroRevision", title: "Revisión N°" },
-      { key: "area", title: "Área" },
+      { key: "nroRevision", title: "N° revisión " },
       {
         key: "fecha",
         title: "Fecha",
         sortBy: (a, b) => new Date(b) - new Date(a),
       },
       { key: "turno", title: "Turno" },
+      { key: "tipo", title: "Tipo" },
+      { key: "area", title: "Área" },
+      { key: "causa", title: "Causa" },
       { key: "responsable", title: "Responsable" },
       { title: "Acciones", key: "actions", sortable: false },
     ],
@@ -230,7 +230,7 @@ export default {
       nroRevision: "",
       tipo: "",
       area: "",
-      defecto: "",
+      causa: "",
       turno: "",
       fecha: "",
       responsable: "",
@@ -241,7 +241,7 @@ export default {
       nroRevision: "",
       tipo: "",
       area: "",
-      defecto: "",
+      causa: "",
       turno: "",
       fecha: "",
       responsable: "",

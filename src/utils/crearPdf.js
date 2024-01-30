@@ -33,7 +33,7 @@ export function generarPdf(data) {
             [{ text: "Turno", style: "tableHeader" }, data.turno],
             [{ text: "Tipo", style: "tableHeader" }, data.tipo],
             [{ text: "Area", style: "tableHeader" }, data.area],
-            [{ text: "Defecto", style: "tableHeader" }, data.defecto],
+            [{ text: "Causa", style: "tableHeader" }, data.causa],
 
             [
               { text: "Responsable del rechazo", style: "tableHeader" },

@@ -54,10 +54,10 @@
           </v-row>
           <v-row justify="start">
             <v-select
-              v-model="selectedDefecto"
-              label="Selecciona defecto"
+              v-model="selectedCausa"
+              label="Selecciona causa"
               v-if="selectedArea !== ''"
-              :items="defectos[selectedAreaIndex] || []"
+              :items="causas[selectedAreaIndex] || []"
             ></v-select>
           </v-row>
 
@@ -165,7 +165,7 @@ export default {
       }),
       selectedArea: "",
       selectedAreaIndex: 0,
-      selectedDefecto: "",
+      selectedCausa: "",
       selectedTipo: "",
       tipoGuardar: "",
       otrosTipos: "",
@@ -202,7 +202,7 @@ export default {
         "J&L",
         "Trim",
       ],
-      defectos: [
+      causas: [
         [
           "Error de ingreso de producto",
           "Producto obsoleto",
@@ -289,7 +289,7 @@ export default {
     selectedArea(newSelectedArea) {
       // Actualizar el índice de selectedAreaIndex cuando cambie selectedArea
       this.selectedAreaIndex = this.areas.indexOf(newSelectedArea);
-      this.selectedDefecto = "";
+      this.selectedCausa = "";
     },
   },
   methods: {
@@ -358,9 +358,9 @@ export default {
           return;
         }
 
-        if (this.selectedDefecto === "") {
+        if (this.selectedCausa === "") {
           this.mostrarError = true;
-          this.mensajeError = "Ingrese un defecto.";
+          this.mensajeError = "Ingrese una causa.";
           return;
         }
 
@@ -368,7 +368,7 @@ export default {
           nroRevision: 1,
           tipo: this.tipoGuardar,
           area: this.selectedArea,
-          defecto: this.selectedDefecto,
+          causa: this.selectedCausa,
           turno: parseInt(this.selectedTurno),
           responsable: this.responsableRechazo,
           cliente: this.orden.CustomerName,

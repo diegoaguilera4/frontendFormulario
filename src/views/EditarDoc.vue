@@ -53,10 +53,10 @@
           </v-row>
           <v-row justify="start">
             <v-select
-              v-model="selectedDefecto"
-              label="Selecciona defecto"
+              v-model="selectedCausa"
+              label="Selecciona causa"
               v-if="selectedArea !== ''"
-              :items="defectos[selectedAreaIndex] || []"
+              :items="causas[selectedAreaIndex] || []"
             ></v-select>
           </v-row>
 
@@ -162,7 +162,7 @@ export default {
       id: "",
       selectedArea: "",
       selectedAreaIndex: 0,
-      selectedDefecto: "",
+      selectedCausa: "",
       selectedTipo: "",
       tipoGuardar: "",
       otrosTipos: "",
@@ -199,7 +199,7 @@ export default {
         "J&L",
         "Trim",
       ],
-      defectos: [
+      causas: [
         [
           "Error de ingreso de producto",
           "Producto obsoleto",
@@ -283,13 +283,18 @@ export default {
       cantidadVersiones: "",
       nroRevisionActual: "",
       fechaDoc: "",
+      contador: 0,
     };
   },
   watch: {
     selectedArea(newSelectedArea) {
       // Actualizar el índice de selectedAreaIndex cuando cambie selectedArea
       this.selectedAreaIndex = this.areas.indexOf(newSelectedArea);
-      this.selectedDefecto = "";
+      // Reiniciar el valor de selectedCausa cuando cambie selectedArea pero no cuando la vista carga
+      this.contador++;
+      if(this.contador>1){
+        this.selectedCausa = "";
+      }
     },
   },
   mounted() {
@@ -362,9 +367,9 @@ export default {
           return;
         }
 
-        if (this.selectedDefecto === "") {
+        if (this.selectedCausa === "") {
           this.mostrarError = true;
-          this.mensajeError = "Ingrese un defecto.";
+          this.mensajeError = "Ingrese una causa.";
           return;
         }
 
@@ -373,7 +378,7 @@ export default {
           area: this.selectedArea,
           turno: parseInt(this.selectedTurno),
           tipo: this.selectedTipo,
-          defecto: this.selectedDefecto,
+          causa: this.selectedCausa,
           responsable: this.responsableRechazo,
           cliente: this.orden.CustomerName,
           producto: this.orden.ProductDescription,
@@ -433,7 +438,7 @@ export default {
         this.selectedTurno = res.data.version.turno.toString();
         this.selectedTipo = res.data.version.tipo;
         this.selectedArea = res.data.version.area;
-        this.selectedDefecto = res.data.version.defecto;
+        this.selectedCausa = res.data.version.causa;
         this.responsableRechazo = res.data.version.responsable;
         this.nroRevisionActual = res.data.version.nroRevision;
         this.cliente = res.data.version.cliente;
