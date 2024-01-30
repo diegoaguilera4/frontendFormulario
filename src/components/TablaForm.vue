@@ -144,7 +144,7 @@
             </v-card-text>
 
             <v-card-actions class="justify-center">
-              <v-btn color="black" variant="tonal" @click="crearPdf(verItem)">
+              <v-btn v-if="switchTabla" color="black" variant="tonal" @click="crearPdf(verItem)">
                 <v-icon left color="red"> mdi-file-pdf </v-icon>
                 Generar PDF
               </v-btn>
