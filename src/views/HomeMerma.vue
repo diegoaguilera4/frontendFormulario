@@ -3,19 +3,19 @@
     <AppDrawer />
 
     <v-main>
-      <FormularioMerma />
+      <TablaMerma />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import FormularioMerma from "../views/FormularioMerma.vue";
+import TablaMerma from "../components/TablaMerma.vue";
 import AppDrawer from "../components/AppDrawer.vue";
 
 export default {
   name: "HomeForm",
   components: {
-    FormularioMerma,
+    TablaMerma,
     AppDrawer,
   },
   data() {

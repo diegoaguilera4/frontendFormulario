@@ -87,7 +87,7 @@
                 class="mt-2"
                 color="green-darken-1"
                 append-icon="mdi-content-save"
-                @click="guardarMerma()"
+                @click="actualizarMerma()"
                 >Guardar</v-btn
               ></v-col
             >
@@ -139,6 +139,10 @@ export default {
       mensajeError: "",
     };
   },
+  mounted() {
+    this.id = this.$route.params.id;
+    this.obtenerMerma();
+  },
   methods: {
     formatearFecha(fecha) {
       const options = { day: "2-digit", month: "2-digit", year: "numeric" };
@@ -148,7 +152,31 @@ export default {
       );
       return fechaFormateada;
     },
-    async guardarMerma() {
+    async obtenerMerma() {
+      //Obtener merma por id
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/merma/obtener/${this.id}`
+        );
+        if (response.status === 200) {
+          this.persona = response.data.persona;
+          this.selectedTurno = response.data.turno;
+          this.selectedTipo = response.data.tipo;
+          this.patente = response.data.patenteCamion;
+          this.empresa = response.data.empresaEnvia;
+          this.totalKilos = response.data.kilos;
+        } else {
+          this.mensajeError = "No se encontró la merma";
+          this.mostrarError = true;
+          return;
+        }
+      } catch (error) {
+        this.mensajeError = "Error para encontrar la merma";
+        this.mostrarError = true;
+        return;
+      }
+    },
+    async actualizarMerma() {
       try {
         if (this.persona.length === 0) {
           this.mensajeError = "Debe ingresar una persona";
@@ -192,20 +220,19 @@ export default {
           empresaEnvia: this.empresa,
           kilos: this.totalKilos,
         };
-        console.log(nuevaMerma);
-        const response = await axios.post(
-          `http://localhost:3000/merma/agregar`,
+        const response = await axios.put(
+          `http://localhost:3000/merma/actualizar/${this.id}`,
           nuevaMerma
         );
-        if (response.status === 201) {
+        if (response.status === 200) {
           this.$router.push("/formMerma");
         } else {
-          this.mensajeError = "No se pudo guardar la merma";
+          this.mensajeError = "No se pudo actualizar la merma";
           this.mostrarError = true;
           return;
         }
       } catch (error) {
-        this.mensajeError = "Error para guardar la merma";
+        this.mensajeError = "Error para actualizar la merma";
         this.mostrarError = true;
         return;
       }
