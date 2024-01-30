@@ -168,7 +168,6 @@ export default {
       }
     },
     crearPdf(data) {
-      console.log(data);
       const doc = data;
       doc.idAux = this.idAux;
       // Generar el PDF

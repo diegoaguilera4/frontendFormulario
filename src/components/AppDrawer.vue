@@ -7,6 +7,9 @@
       <v-list-item @click="$router.push('/escanear')">
         <v-list-item-title>Escanear</v-list-item-title>
       </v-list-item>
+      <v-list-item @click="$router.push('/formMerma')">
+        <v-list-item-title>Merma</v-list-item-title>
+      </v-list-item>
     </v-list>
   </v-navigation-drawer>
   <v-app-bar>
