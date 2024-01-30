@@ -6,12 +6,12 @@
           <v-card-title
             class="text-h6 text-md-h5 text-lg-h4 text-center"
             style="
-              background-color: #d90000;
+              background-color: #126aa3;
               color: #ffffff;
               border-radius: 20px;
             "
           >
-            Control de desperdicio
+            Control picadora
           </v-card-title>
           <v-row style="margin-top: 20px">
             <v-col>
@@ -63,18 +63,8 @@
           </v-row>
           <v-row justify="center">
             <v-textarea
-              v-model="nombre"
-              label="Nombre"
-              variant="outlined"
-              dense
-              rows="1"
-              max-rows="4"
-            ></v-textarea>
-          </v-row>
-          <v-row justify="center">
-            <v-textarea
-              v-model="rut"
-              label="RUT"
+              v-model="persona"
+              label="Persona"
               variant="outlined"
               dense
               rows="1"
@@ -106,6 +96,7 @@
                 class="mt-2"
                 color="green-darken-1"
                 append-icon="mdi-content-save"
+                @click="mostrarAlerta()"
                 >Guardar</v-btn
               ></v-col
             >
@@ -123,6 +114,37 @@
           </v-row>
         </v-card>
       </v-row>
+      <v-dialog v-model="mostrarConfirmacion" max-width="500">
+        <v-card class="text-center" style="border-radius: 20px; padding: 10px">
+          <v-card-title class="headline">Confirmación</v-card-title>
+          <v-card-text
+            >¿Estás seguro de que quieres enviar este control?</v-card-text
+          >
+          <v-card-actions class="justify-center">
+            <v-btn
+              variant="tonal"
+              color="green darken-1"
+              text
+              @click="crearControlPicadora()"
+              append-icon="mdi-check-circle-outline"
+              >Sí</v-btn
+            >
+            <v-btn
+              variant="tonal"
+              color="red darken-1"
+              text
+              @click="cancelarEnvio()"
+              append-icon="mdi-close-circle-outline"
+              >Cancelar</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <error-dialog
+        :mostrarError="mostrarError"
+        :mensajeError="mensajeError"
+        @cerrar-dialogo="cerrarDialogo"
+      />
     </v-form>
   </v-sheet>
 </template>
@@ -131,19 +153,26 @@
 import axios from "axios";
 import { generarPdf } from "../utils/crearPdf";
 import pdfMake from "pdfmake/build/pdfmake";
+import ErrorDialog from "../components/ErrorDialog.vue";
 
 export default {
+  components: {
+    ErrorDialog,
+  },
   data() {
     return {
       id: "",
       idAux: "",
+      idPadre: "",
       orden: {},
       documento: {},
       numeroOrden: "",
-      nombre: "",
-      rut: "",
+      persona: "",
       selectedTurno: "",
       totalKilos: "",
+      mostrarError: false,
+      mensajeError: "",
+      mostrarConfirmacion: false,
     };
   },
   mounted() {
@@ -159,12 +188,51 @@ export default {
         );
         this.documento = res.data.version;
         this.idAux = res.data.idAux;
+        this.idPadre = res.data.id;
         this.documento.fecha = this.formatearFecha(this.documento.fecha);
       } catch (error) {
         console.error(
           `Error al obtener el control con ID ${id}:`,
           error.message
         );
+      }
+    },
+    async crearControlPicadora() {
+      try {
+        const nuevoControlPicadora = {
+          desperdicio: this.idPadre,
+          persona: this.persona,
+          turno: this.selectedTurno,
+          kilos: this.totalKilos,
+        };
+        if (this.persona.length === 0) {
+          this.mensajeError = "Debe ingresar una persona";
+          this.mostrarError = true;
+          return;
+        }
+        if (this.selectedTurno.length === 0) {
+          this.mensajeError = "Debe ingresar un turno";
+          this.mostrarError = true;
+          return;
+        }
+        //validar que kilos sea un numero y no string
+        if (this.totalKilos.length === 0 || isNaN(this.totalKilos)) {
+          this.mensajeError = "Debe ingresar un número válido en totalKilos";
+          this.mostrarError = true;
+          return;
+        }
+        let res = await axios.post(
+          "http://localhost:3000/controlPicadora/agregar",
+          nuevoControlPicadora
+        );
+        if (res.status === 201) {
+          console.log("Control picadora creado correctamente");
+          this.$router.push("/escanear");
+        } else {
+          console.error("Error al crear el control picadora");
+        }
+      } catch (error) {
+        console.error(`Error al enviar control:`, error.message);
       }
     },
     crearPdf(data) {
@@ -195,6 +263,16 @@ export default {
           error.message
         );
       }
+    },
+    mostrarAlerta() {
+      this.mostrarConfirmacion = true; // Mostrar la alerta al hacer clic en "Enviar control"
+    },
+    cancelarEnvio() {
+      this.mostrarConfirmacion = false; // Cerrar la alerta si se cancela el envío
+    },
+    cerrarDialogo() {
+      this.mostrarError = false;
+      this.mostrarConfirmacion = false;
     },
   },
 };
