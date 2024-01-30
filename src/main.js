@@ -7,9 +7,6 @@ import FormularioControl from './views/FormularioControl.vue'
 import EditarDoc from './views/EditarDoc.vue'
 import FormularioEscaneo from './views/FormularioEscaneo.vue'
 import HomeEscaneo from './views/HomeEscaneo.vue'
-import HomeMerma from './views/HomeMerma.vue'
-import FormularioMerma from './views/FormularioMerma.vue'
-import EditarMerma from './views/EditarMerma.vue'
 import HomePicado from './views/HomePicado.vue'
 import App from './App.vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
@@ -22,9 +19,6 @@ const routes = [
   { path: '/editarDocumento/:id/:nroRevision', name: 'EditarDoc', component: EditarDoc },
   { path: '/escanear', component: HomeEscaneo },
   { path: '/formEscaneo/:idAux', name: 'FormEscaneo', component: FormularioEscaneo },
-  { path: '/formMerma', name: 'FormMerma', component: HomeMerma },
-  { path: '/nuevaMerma', name: 'NuevaMerma', component: FormularioMerma },
-  { path: '/editarMerma/:id', name: 'EditarMerma', component: EditarMerma },
   { path: '/picado', component: HomePicado },
 ]
 

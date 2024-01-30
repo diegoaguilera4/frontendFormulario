@@ -29,7 +29,7 @@
             <v-select
               label="Selecciona tipo"
               v-model="selectedTipo"
-              :items="['Caja', 'Lamina', 'Otros']"
+              :items="['Caja', 'Lamina', 'Papel', 'Otros']"
             >
             </v-select>
           </v-row>
